@@ -1,3 +1,5 @@
+using System;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,6 +43,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGrounded()
     {
+        // Change to raycast
         Vector2 center = groundCheck.bounds.center;
         Collider2D[] colliders = Physics2D.OverlapCapsuleAll(
             center,
@@ -54,11 +57,37 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        Vector2 curPosition = transform.position;
-        rb.MovePosition(
-            curPosition + movement * entityScriptableObject.speed * Time.fixedDeltaTime
+        Vector2 curPosition = rb.position;
+        Vector2 change = new(entityScriptableObject.speed * Time.fixedDeltaTime, 0);
+
+        if (isGrounded && movement.y != 0)
+        {
+            change.y = SolveKinematicsEquation(entityScriptableObject.jumpSpeed, 0);
+        }
+        else if (!isGrounded)
+        {
+            change.y = GetGravityMovement();
+            movement.y = 1;
+        }
+        rb.MovePosition(curPosition + (change * movement));
+    }
+
+    private float GetGravityMovement()
+    {
+        if (isGrounded)
+        {
+            return 0;
+        }
+
+        return SolveKinematicsEquation(
+            rb.linearVelocityY,
+            entityScriptableObject.gravityForce * entityScriptableObject.gravityScale
         );
     }
 
-    private void Jump() { }
+    private float SolveKinematicsEquation(float velocity, float acceleration)
+    {
+        return (velocity * Time.fixedDeltaTime)
+            + (0.5f * acceleration * Time.fixedDeltaTime * Time.fixedDeltaTime);
+    }
 }

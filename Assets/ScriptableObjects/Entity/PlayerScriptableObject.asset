@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: PlayerScriptableObject
   m_EditorClassIdentifier: 
   health: 3
-  speed: 5
-  jumpHeight: 10
+  speed: 3
+  jumpSpeed: 75
   attackDamage: 1
+  gravityForce: -9.81
+  gravityScale: 100

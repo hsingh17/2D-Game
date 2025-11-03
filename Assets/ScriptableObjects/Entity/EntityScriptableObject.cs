@@ -5,6 +5,8 @@ public class EntityScriptableObject : ScriptableObject
 {
     public int health = 3;
     public float speed = 5f;
-    public float jumpHeight = 10f;
+    public float jumpSpeed = 10f;
     public float attackDamage = 1f;
+    public float gravityForce = -9.81f;
+    public float gravityScale = 1f;
 }
