@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 3
   speed: 3
-  jumpSpeed: 75
+  jumpSpeed: 60
   attackDamage: 1
   gravityForce: -9.81
-  gravityScale: 100
+  gravityScale: 20

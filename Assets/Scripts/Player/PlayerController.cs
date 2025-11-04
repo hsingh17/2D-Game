@@ -1,10 +1,11 @@
-using System;
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    public delegate void OnPlayerMove(PlayerState state);
+    public static event OnPlayerMove onPlayerMove;
+
     [SerializeField]
     private EntityScriptableObject entityScriptableObject;
 
@@ -43,7 +44,6 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGrounded()
     {
-        // Change to raycast
         Vector2 center = groundCheck.bounds.center;
         Collider2D[] colliders = Physics2D.OverlapCapsuleAll(
             center,
@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour
             change.y = GetGravityMovement();
             movement.y = 1;
         }
+
         rb.MovePosition(curPosition + (change * movement));
     }
 
