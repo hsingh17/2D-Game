@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour
     {
         CheckGrounded();
         Move();
+        PublishOnPlayerMoveMessage();
     }
 
     private void CheckGrounded()
@@ -58,19 +59,50 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         Vector2 curPosition = rb.position;
-        Vector2 change = new(entityScriptableObject.speed * Time.fixedDeltaTime, 0);
-
-        if (isGrounded && movement.y != 0)
+        Vector2 change = new(entityScriptableObject.speed * Time.fixedDeltaTime, GetYMovement());
+        if (!isGrounded)
         {
-            change.y = SolveKinematicsEquation(entityScriptableObject.jumpSpeed, 0);
-        }
-        else if (!isGrounded)
-        {
-            change.y = GetGravityMovement();
             movement.y = 1;
         }
 
         rb.MovePosition(curPosition + (change * movement));
+    }
+
+    private void PublishOnPlayerMoveMessage()
+    {
+        if (movement == Vector2.zero) // Idle
+        {
+            onPlayerMove.Invoke(PlayerState.Idle);
+        }
+        else if (movement.y == 0 && movement.x != 0) // Left or Right movement
+        {
+            onPlayerMove.Invoke(movement.x > 0 ? PlayerState.MoveRight : PlayerState.MoveLeft);
+        }
+        //  Falling and Jumping not both working only one or the other
+        else if (!isGrounded) // Fall
+        {
+            onPlayerMove.Invoke(PlayerState.Fall);
+        }
+        else if (movement.y > 0) // Jump
+        {
+            onPlayerMove.Invoke(PlayerState.Jump);
+        }
+    }
+
+    private float GetYMovement()
+    {
+        if (isGrounded && movement.y != 0)
+        {
+            return SolveKinematicsEquation(entityScriptableObject.jumpSpeed, 0);
+        }
+        else if (!isGrounded)
+        {
+            return GetGravityMovement();
+        }
+        else
+        {
+            return 0;
+        }
     }
 
     private float GetGravityMovement()

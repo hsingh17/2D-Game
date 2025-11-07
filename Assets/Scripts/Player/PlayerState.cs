@@ -5,4 +5,7 @@ public enum PlayerState
     MoveRight,
     Jump,
     Fall,
+    Hurt,
+    Crouch,
+    Climb,
 }
