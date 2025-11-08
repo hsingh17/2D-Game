@@ -39,8 +39,8 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         CheckGrounded();
-        Move();
         PublishOnPlayerMoveMessage();
+        Move();
     }
 
     private void CheckGrounded()
@@ -70,7 +70,11 @@ public class PlayerController : MonoBehaviour
 
     private void PublishOnPlayerMoveMessage()
     {
-        if (movement == Vector2.zero) // Idle
+        if (!isGrounded && movement.y == 0) // Fall
+        {
+            onPlayerMove.Invoke(PlayerState.Fall);
+        }
+        else if (isGrounded && movement == Vector2.zero) // Idle
         {
             onPlayerMove.Invoke(PlayerState.Idle);
         }
@@ -78,12 +82,7 @@ public class PlayerController : MonoBehaviour
         {
             onPlayerMove.Invoke(movement.x > 0 ? PlayerState.MoveRight : PlayerState.MoveLeft);
         }
-        //  Falling and Jumping not both working only one or the other
-        else if (!isGrounded) // Fall
-        {
-            onPlayerMove.Invoke(PlayerState.Fall);
-        }
-        else if (movement.y > 0) // Jump
+        else if (isGrounded && movement.y > 0) // Jump
         {
             onPlayerMove.Invoke(PlayerState.Jump);
         }
