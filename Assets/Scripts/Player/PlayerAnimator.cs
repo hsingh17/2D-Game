@@ -14,7 +14,7 @@ public class PlayerAnimator : MonoBehaviour
     {
         animator = gameObject.GetComponent<Animator>();
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-        PlayerController.onPlayerMove += AnimateOnPlayerStateChange;
+        PlayerStateManager.onStateUpdate += AnimateOnPlayerStateChange;
     }
 
     private void AnimateOnPlayerStateChange(PlayerState state)

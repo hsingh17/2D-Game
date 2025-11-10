@@ -24,11 +24,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CapsuleCollider2D groundCheck;
 
+    private PlayerStateManager playerStateManager;
+
     private Vector2 movement;
 
     private void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        playerStateManager = gameObject.GetComponent<PlayerStateManager>();
     }
 
     private void Update()
@@ -39,7 +42,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         CheckGrounded();
-        PublishOnPlayerMoveMessage();
+        UpdatePlayerState();
         Move();
     }
 
@@ -68,23 +71,24 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(curPosition + (change * movement));
     }
 
-    private void PublishOnPlayerMoveMessage()
+    private void UpdatePlayerState()
     {
         if (!isGrounded && movement.y == 0) // Fall
         {
-            onPlayerMove.Invoke(PlayerState.Fall);
+            playerStateManager.CurrentState = PlayerState.Fall;
         }
         else if (isGrounded && movement == Vector2.zero) // Idle
         {
-            onPlayerMove.Invoke(PlayerState.Idle);
+            playerStateManager.CurrentState = PlayerState.Idle;
         }
         else if (movement.y == 0 && movement.x != 0) // Left or Right movement
         {
-            onPlayerMove.Invoke(movement.x > 0 ? PlayerState.MoveRight : PlayerState.MoveLeft);
+            playerStateManager.CurrentState =
+                movement.x > 0 ? PlayerState.MoveRight : PlayerState.MoveLeft;
         }
         else if (isGrounded && movement.y > 0) // Jump
         {
-            onPlayerMove.Invoke(PlayerState.Jump);
+            playerStateManager.CurrentState = PlayerState.Jump;
         }
     }
 

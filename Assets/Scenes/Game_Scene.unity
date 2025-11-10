@@ -10690,6 +10690,7 @@ GameObject:
   - component: {fileID: 337472375}
   - component: {fileID: 337472374}
   - component: {fileID: 337472377}
+  - component: {fileID: 337472378}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -10735,7 +10736,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   groundCheck: {fileID: 1911680486}
-  spriteRenderer: {fileID: 528639730}
 --- !u!114 &337472375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10793,6 +10793,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!114 &337472378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 337472372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02cf1b95f80f8e9448093a32f078b915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
