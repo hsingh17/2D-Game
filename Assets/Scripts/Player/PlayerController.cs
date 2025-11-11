@@ -1,11 +1,10 @@
+using System;
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public delegate void OnPlayerMove(PlayerState state);
-    public static event OnPlayerMove onPlayerMove;
-
     [SerializeField]
     private EntityScriptableObject entityScriptableObject;
 
@@ -24,6 +23,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CapsuleCollider2D groundCheck;
 
+    [SerializeField]
+    private float startJumpHeight;
+
+    [SerializeField]
+    private bool reachedMaxJump;
+
     private PlayerStateManager playerStateManager;
 
     private Vector2 movement;
@@ -41,9 +46,22 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        CheckIfReachMaxJumpHeight();
         CheckGrounded();
         UpdatePlayerState();
         Move();
+    }
+
+    private void CheckIfReachMaxJumpHeight()
+    {
+        if (playerStateManager.CurrentState == PlayerState.Jumping)
+        {
+            reachedMaxJump = rb.position.y - startJumpHeight >= entityScriptableObject.jumpHeight;
+        }
+        else
+        {
+            reachedMaxJump = false;
+        }
     }
 
     private void CheckGrounded()
@@ -73,32 +91,43 @@ public class PlayerController : MonoBehaviour
 
     private void UpdatePlayerState()
     {
-        if (!isGrounded && movement.y == 0) // Fall
+        if (IsFall())
         {
             playerStateManager.CurrentState = PlayerState.Fall;
         }
-        else if (isGrounded && movement == Vector2.zero) // Idle
+        else if (IsIdle())
         {
             playerStateManager.CurrentState = PlayerState.Idle;
         }
-        else if (movement.y == 0 && movement.x != 0) // Left or Right movement
+        else if (IsMoving())
         {
             playerStateManager.CurrentState =
                 movement.x > 0 ? PlayerState.MoveRight : PlayerState.MoveLeft;
         }
-        else if (isGrounded && movement.y > 0) // Jump
+        else if (IsStartJump())
         {
-            playerStateManager.CurrentState = PlayerState.Jump;
+            playerStateManager.CurrentState = PlayerState.StartJump;
+        }
+        else if (IsJumping())
+        {
+            playerStateManager.CurrentState = PlayerState.Jumping;
         }
     }
 
     private float GetYMovement()
     {
-        if (isGrounded && movement.y != 0)
+        if (
+            playerStateManager.CurrentState == PlayerState.StartJump
+            || playerStateManager.CurrentState == PlayerState.Jumping
+        )
         {
+            if (playerStateManager.CurrentState == PlayerState.StartJump)
+            {
+                startJumpHeight = rb.position.y;
+            }
             return SolveKinematicsEquation(entityScriptableObject.jumpSpeed, 0);
         }
-        else if (!isGrounded)
+        else if (playerStateManager.CurrentState == PlayerState.Fall)
         {
             return GetGravityMovement();
         }
@@ -125,5 +154,37 @@ public class PlayerController : MonoBehaviour
     {
         return (velocity * Time.fixedDeltaTime)
             + (0.5f * acceleration * Time.fixedDeltaTime * Time.fixedDeltaTime);
+    }
+
+    private bool IsFall()
+    {
+        bool notGroundedAndNotJumping =
+            !isGrounded
+            && playerStateManager.CurrentState != PlayerState.StartJump
+            && playerStateManager.CurrentState != PlayerState.Jumping;
+
+        return notGroundedAndNotJumping || reachedMaxJump;
+    }
+
+    private bool IsIdle()
+    {
+        return isGrounded && movement == Vector2.zero;
+    }
+
+    private bool IsMoving()
+    {
+        return movement.y == 0 && movement.x != 0;
+    }
+
+    private bool IsStartJump()
+    {
+        return isGrounded && movement.y > 0;
+    }
+
+    private bool IsJumping()
+    {
+        return !isGrounded
+            && !reachedMaxJump
+            && playerStateManager.CurrentState == PlayerState.StartJump;
     }
 }

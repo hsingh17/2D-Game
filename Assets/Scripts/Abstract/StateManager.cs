@@ -7,7 +7,9 @@ public abstract class StateManager<T> : MonoBehaviour
     public delegate void OnStateUpdate(T newState);
     public static event OnStateUpdate onStateUpdate;
 
+    [SerializeField]
     private T currentState;
+
     public T CurrentState
     {
         get { return currentState; }

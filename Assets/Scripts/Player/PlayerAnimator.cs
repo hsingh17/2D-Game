@@ -29,7 +29,7 @@ public class PlayerAnimator : MonoBehaviour
                 animator.CrossFade(run, 0, 0);
                 FlipSprite(state);
                 break;
-            case PlayerState.Jump:
+            case PlayerState.Jumping:
                 animator.CrossFade(jump, 0, 0);
                 break;
             case PlayerState.Fall:
