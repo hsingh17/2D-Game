@@ -10736,6 +10736,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   groundCheck: {fileID: 1911680486}
+  startJumpHeight: 0
+  reachedMaxJump: 0
 --- !u!114 &337472375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10805,6 +10807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02cf1b95f80f8e9448093a32f078b915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentState: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -10911,7 +10914,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 9
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -14409,7 +14412,7 @@ Transform:
   m_GameObject: {fileID: 1911680484}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.456, y: -0.495, z: 0}
+  m_LocalPosition: {x: -0.4543, y: -0.4985, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14450,7 +14453,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.021445828, y: -0.4945473}
-  m_Size: {x: 0.42406657, y: 0.022325994}
+  m_Size: {x: 0.42406657, y: 0.03}
   m_Direction: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

@@ -24,6 +24,9 @@ public class PlayerController : MonoBehaviour
     private CapsuleCollider2D groundCheck;
 
     [SerializeField]
+    private float groundedRaycastDistance;
+
+    [SerializeField]
     private float startJumpHeight;
 
     [SerializeField]
@@ -75,6 +78,13 @@ public class PlayerController : MonoBehaviour
             groundMask
         );
         isGrounded = colliders.Length > 0;
+
+        // isGrounded = Physics2D.Raycast(
+        //     groundCheck.bounds.center,
+        //     Vector2.down,
+        //     groundedRaycastDistance,
+        //     groundMask
+        // );
     }
 
     private void Move()
