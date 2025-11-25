@@ -1,10 +1,13 @@
-using System;
-using NUnit.Framework;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Class Variables
+
+    #region SerializeableFields
+
     [SerializeField]
     private EntityScriptableObject entityScriptableObject;
 
@@ -15,26 +18,37 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
 
     [SerializeField]
-    private bool isGrounded;
-
-    [SerializeField]
     private LayerMask groundMask;
 
     [SerializeField]
-    private CapsuleCollider2D groundCheck;
+    private Collider2D collider2d;
 
     [SerializeField]
-    private float groundedRaycastDistance;
+    private bool isGrounded;
 
     [SerializeField]
-    private float startJumpHeight;
+    private ContactFilter2D groundFilter;
 
     [SerializeField]
-    private bool reachedMaxJump;
+    private BoxCastProperties boxCastProperties;
+
+    #endregion
+
+    #region Private Variables
 
     private PlayerStateManager playerStateManager;
-
     private Vector2 movement;
+    private float startJumpY;
+    private bool reachedMaxJump;
+    private float displacementToGround;
+
+    #endregion
+
+    #endregion
+
+    #region Functions
+
+    #region MonoBehavior Functions
 
     private void Start()
     {
@@ -55,11 +69,15 @@ public class PlayerController : MonoBehaviour
         Move();
     }
 
+    #endregion
+
+    #region Movement Related Functions
+
     private void CheckIfReachMaxJumpHeight()
     {
         if (playerStateManager.CurrentState == PlayerState.Jumping)
         {
-            reachedMaxJump = rb.position.y - startJumpHeight >= entityScriptableObject.jumpHeight;
+            reachedMaxJump = rb.position.y - startJumpY >= entityScriptableObject.jumpHeight;
         }
         else
         {
@@ -69,35 +87,101 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGrounded()
     {
-        Vector2 center = groundCheck.bounds.center;
-        Collider2D[] colliders = Physics2D.OverlapCapsuleAll(
-            center,
-            groundCheck.size,
-            CapsuleDirection2D.Horizontal,
-            0,
+        Bounds colliderBounds = collider2d.bounds;
+        Vector3 colliderCenter = colliderBounds.center;
+        Vector3 colliderExtents = colliderBounds.extents;
+        Vector3 colliderSize = colliderBounds.size;
+
+        RaycastHit2D hit = Physics2D.BoxCast(
+            boxCastProperties.CalculateBoxCastOrigin(colliderCenter, colliderExtents),
+            boxCastProperties.CalculateBoxCastSize(colliderSize),
+            0f,
+            Vector2.down,
+            boxCastProperties.BoxCastDistance,
             groundMask
         );
-        isGrounded = colliders.Length > 0;
 
-        // isGrounded = Physics2D.Raycast(
-        //     groundCheck.bounds.center,
-        //     Vector2.down,
-        //     groundedRaycastDistance,
-        //     groundMask
-        // );
+        if (hit)
+        {
+            // Only save displacement if we just hit ground from a fall
+            if (!isGrounded)
+            {
+                displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
+            }
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
     }
 
     private void Move()
     {
+        movement.y = 1;
+
         Vector2 curPosition = rb.position;
         Vector2 change = new(entityScriptableObject.speed * Time.fixedDeltaTime, GetYMovement());
-        if (!isGrounded)
+        Vector2 nextPosition = curPosition + (change * movement);
+
+        rb.MovePosition(nextPosition);
+
+        // Reset movement vector, noticed that if I didn't do this,
+        // it would carry over the movement.y = 1 to the next loop
+        movement = Vector2.zero;
+    }
+
+    private float GetYMovement()
+    {
+        if (
+            playerStateManager.CurrentState == PlayerState.StartJump
+            || playerStateManager.CurrentState == PlayerState.Jumping
+        )
         {
-            movement.y = 1;
+            if (playerStateManager.CurrentState == PlayerState.StartJump)
+            {
+                startJumpY = rb.position.y;
+            }
+            return SolveKinematicsEquation(entityScriptableObject.jumpSpeed, 0);
+        }
+        else if (playerStateManager.CurrentState == PlayerState.Fall)
+        {
+            return GetGravityMovement();
+        }
+        else if (displacementToGround != 0)
+        {
+            float ret = displacementToGround;
+            displacementToGround = 0;
+            return ret;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    private float GetGravityMovement()
+    {
+        if (isGrounded)
+        {
+            return 0;
         }
 
-        rb.MovePosition(curPosition + (change * movement));
+        return SolveKinematicsEquation(
+            0,
+            entityScriptableObject.gravityForce * entityScriptableObject.gravityScale
+        );
     }
+
+    private float SolveKinematicsEquation(float velocity, float acceleration)
+    {
+        return (velocity * Time.fixedDeltaTime)
+            + (0.5f * acceleration * Time.fixedDeltaTime * Time.fixedDeltaTime);
+    }
+
+    #endregion
+
+    #region Player State Update Functions
 
     private void UpdatePlayerState()
     {
@@ -122,48 +206,6 @@ public class PlayerController : MonoBehaviour
         {
             playerStateManager.CurrentState = PlayerState.Jumping;
         }
-    }
-
-    private float GetYMovement()
-    {
-        if (
-            playerStateManager.CurrentState == PlayerState.StartJump
-            || playerStateManager.CurrentState == PlayerState.Jumping
-        )
-        {
-            if (playerStateManager.CurrentState == PlayerState.StartJump)
-            {
-                startJumpHeight = rb.position.y;
-            }
-            return SolveKinematicsEquation(entityScriptableObject.jumpSpeed, 0);
-        }
-        else if (playerStateManager.CurrentState == PlayerState.Fall)
-        {
-            return GetGravityMovement();
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    private float GetGravityMovement()
-    {
-        if (isGrounded)
-        {
-            return 0;
-        }
-
-        return SolveKinematicsEquation(
-            rb.linearVelocityY,
-            entityScriptableObject.gravityForce * entityScriptableObject.gravityScale
-        );
-    }
-
-    private float SolveKinematicsEquation(float velocity, float acceleration)
-    {
-        return (velocity * Time.fixedDeltaTime)
-            + (0.5f * acceleration * Time.fixedDeltaTime * Time.fixedDeltaTime);
     }
 
     private bool IsFall()
@@ -197,4 +239,8 @@ public class PlayerController : MonoBehaviour
             && !reachedMaxJump
             && playerStateManager.CurrentState == PlayerState.StartJump;
     }
+
+    #endregion
+
+    #endregion
 }
