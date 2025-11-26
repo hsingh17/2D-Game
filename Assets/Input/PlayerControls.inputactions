@@ -20,7 +20,7 @@
                 {
                     "name": "2D Vector",
                     "id": "f4bcc3d3-d8db-4a78-adfe-e79c174e1916",
-                    "path": "2DVector",
+                    "path": "2DVector(mode=1)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -54,6 +54,17 @@
                     "name": "right",
                     "id": "cf8630c1-b1fd-4732-8326-cf54eda63c19",
                     "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Down",
+                    "id": "48d22e9b-5bf1-463b-b7ba-0bec505df165",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard",

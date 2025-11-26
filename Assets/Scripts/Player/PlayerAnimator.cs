@@ -2,13 +2,26 @@ using UnityEngine;
 
 public class PlayerAnimator : MonoBehaviour
 {
+    #region Class Variables
+
+    #region Animation Hashes
+
     private readonly int run = Animator.StringToHash("Run");
     private readonly int idle = Animator.StringToHash("Idle");
     private readonly int jump = Animator.StringToHash("Jump");
     private readonly int fall = Animator.StringToHash("Fall");
+    private readonly int crouch = Animator.StringToHash("Crouch");
+
+    #endregion
+
+    #region Private Variables
 
     private SpriteRenderer spriteRenderer;
     private Animator animator;
+
+    #endregion
+
+    #endregion
 
     private void Start()
     {
@@ -34,6 +47,9 @@ public class PlayerAnimator : MonoBehaviour
                 break;
             case PlayerState.Fall:
                 animator.CrossFade(fall, 0, 0);
+                break;
+            case PlayerState.Crouch:
+                animator.CrossFade(crouch, 0, 0);
                 break;
         }
     }

@@ -1,4 +1,5 @@
-using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,9 +26,6 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private bool isGrounded;
-
-    [SerializeField]
-    private ContactFilter2D groundFilter;
 
     [SerializeField]
     private BoxCastProperties boxCastProperties;
@@ -58,7 +56,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        movement = moveAction.action.ReadValue<Vector2>();
+        ReadMovement();
     }
 
     private void FixedUpdate()
@@ -66,12 +64,19 @@ public class PlayerController : MonoBehaviour
         CheckIfReachMaxJumpHeight();
         CheckGrounded();
         UpdatePlayerState();
-        Move();
+        DoAction();
     }
 
     #endregion
 
     #region Movement Related Functions
+
+    private void ReadMovement()
+    {
+        movement = moveAction.action.ReadValue<Vector2>();
+        // Y movement can only happen when on the ground
+        movement.y = isGrounded ? movement.y : 0;
+    }
 
     private void CheckIfReachMaxJumpHeight()
     {
@@ -113,6 +118,31 @@ public class PlayerController : MonoBehaviour
         else
         {
             isGrounded = false;
+        }
+    }
+
+    private void DoAction()
+    {
+        if (playerStateManager.CurrentState == PlayerState.Crouch)
+        {
+            Crouch();
+        }
+        else
+        {
+            Move();
+        }
+    }
+
+    private void Crouch()
+    {
+        if (collider2d is BoxCollider2D boxCollider)
+        {
+            Vector2 curSize = boxCollider.size;
+            // boxCollider.size = new(curSize.x, curSize.y / 2);
+        }
+        else
+        {
+            Debug.LogError("This Collider2D does not support crouching!");
         }
     }
 
@@ -193,10 +223,9 @@ public class PlayerController : MonoBehaviour
         {
             playerStateManager.CurrentState = PlayerState.Idle;
         }
-        else if (IsMoving())
+        else if (IsCrouching())
         {
-            playerStateManager.CurrentState =
-                movement.x > 0 ? PlayerState.MoveRight : PlayerState.MoveLeft;
+            playerStateManager.CurrentState = PlayerState.Crouch;
         }
         else if (IsStartJump())
         {
@@ -205,6 +234,11 @@ public class PlayerController : MonoBehaviour
         else if (IsJumping())
         {
             playerStateManager.CurrentState = PlayerState.Jumping;
+        }
+        else if (IsMoving())
+        {
+            playerStateManager.CurrentState =
+                movement.x > 0 ? PlayerState.MoveRight : PlayerState.MoveLeft;
         }
     }
 
@@ -230,14 +264,22 @@ public class PlayerController : MonoBehaviour
 
     private bool IsStartJump()
     {
-        return isGrounded && movement.y > 0;
+        return isGrounded && movement.y == 1;
     }
 
     private bool IsJumping()
     {
         return !isGrounded
             && !reachedMaxJump
-            && playerStateManager.CurrentState == PlayerState.StartJump;
+            && (
+                playerStateManager.CurrentState == PlayerState.StartJump
+                || playerStateManager.CurrentState == PlayerState.Jumping
+            );
+    }
+
+    private bool IsCrouching()
+    {
+        return isGrounded && movement.y == -1;
     }
 
     #endregion
