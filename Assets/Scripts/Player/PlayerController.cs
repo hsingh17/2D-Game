@@ -1,3 +1,4 @@
+using System;
 using Unity.VisualScripting;
 using UnityEditor.PackageManager;
 using UnityEngine;
@@ -22,10 +23,10 @@ public class PlayerController : MonoBehaviour
     private LayerMask groundMask;
 
     [SerializeField]
-    private Collider2D collider2d;
+    private BoxCollider2D uncrouchedCollider;
 
     [SerializeField]
-    private bool isGrounded;
+    private BoxCollider2D crouchedCollider;
 
     [SerializeField]
     private BoxCastProperties boxCastProperties;
@@ -34,8 +35,10 @@ public class PlayerController : MonoBehaviour
 
     #region Private Variables
 
+    private BoxCollider2D boxCollider;
     private PlayerStateManager playerStateManager;
     private Vector2 movement;
+    private bool isGrounded;
     private float startJumpY;
     private bool reachedMaxJump;
     private float displacementToGround;
@@ -52,6 +55,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         playerStateManager = gameObject.GetComponent<PlayerStateManager>();
+        boxCollider = crouchedCollider;
     }
 
     private void Update()
@@ -92,7 +96,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGrounded()
     {
-        Bounds colliderBounds = collider2d.bounds;
+        Bounds colliderBounds = boxCollider.bounds;
         Vector3 colliderCenter = colliderBounds.center;
         Vector3 colliderExtents = colliderBounds.extents;
         Vector3 colliderSize = colliderBounds.size;
@@ -123,31 +127,39 @@ public class PlayerController : MonoBehaviour
 
     private void DoAction()
     {
-        if (playerStateManager.CurrentState == PlayerState.Crouch)
-        {
-            Crouch();
-        }
-        else
-        {
-            Move();
-        }
+        Crouch();
+        Move();
     }
 
     private void Crouch()
     {
-        if (collider2d is BoxCollider2D boxCollider)
+        if (
+            playerStateManager.CurrentState == PlayerState.Crouch
+            && boxCollider != crouchedCollider
+        ) // Crouching and need to change collider to crouched
         {
-            Vector2 curSize = boxCollider.size;
-            // boxCollider.size = new(curSize.x, curSize.y / 2);
+            crouchedCollider.enabled = true;
+            boxCollider = crouchedCollider;
+            uncrouchedCollider.enabled = false;
         }
-        else
+        else if (
+            playerStateManager.CurrentState != PlayerState.Crouch
+            && boxCollider != uncrouchedCollider
+        ) // Not crouching and need to revert collider to uncrouched
         {
-            Debug.LogError("This Collider2D does not support crouching!");
+            uncrouchedCollider.enabled = true;
+            boxCollider = uncrouchedCollider;
+            crouchedCollider.enabled = false;
         }
     }
 
     private void Move()
     {
+        if (playerStateManager.CurrentState == PlayerState.Crouch)
+        {
+            return;
+        }
+
         movement.y = 1;
 
         Vector2 curPosition = rb.position;
