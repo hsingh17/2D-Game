@@ -1,6 +1,3 @@
-using System;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,10 +20,10 @@ public class PlayerController : MonoBehaviour
     private LayerMask groundMask;
 
     [SerializeField]
-    private BoxCollider2D uncrouchedCollider;
+    private Collider2D uncrouchedCollider;
 
     [SerializeField]
-    private BoxCollider2D crouchedCollider;
+    private Collider2D crouchedCollider;
 
     [SerializeField]
     private BoxCastProperties boxCastProperties;
@@ -35,7 +32,7 @@ public class PlayerController : MonoBehaviour
 
     #region Private Variables
 
-    private BoxCollider2D boxCollider;
+    private Collider2D currentCollider;
     private PlayerStateManager playerStateManager;
     private Vector2 movement;
     private bool isGrounded;
@@ -55,7 +52,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         playerStateManager = gameObject.GetComponent<PlayerStateManager>();
-        boxCollider = crouchedCollider;
+        currentCollider = crouchedCollider;
     }
 
     private void Update()
@@ -78,7 +75,7 @@ public class PlayerController : MonoBehaviour
     private void ReadMovement()
     {
         movement = moveAction.action.ReadValue<Vector2>();
-        // Y movement can only happen when on the ground
+        // Y movement can only happen when on the ground (e.g: jumping and crouching)
         movement.y = isGrounded ? movement.y : 0;
     }
 
@@ -96,7 +93,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGrounded()
     {
-        Bounds colliderBounds = boxCollider.bounds;
+        Bounds colliderBounds = currentCollider.bounds;
         Vector3 colliderCenter = colliderBounds.center;
         Vector3 colliderExtents = colliderBounds.extents;
         Vector3 colliderSize = colliderBounds.size;
@@ -112,11 +109,7 @@ public class PlayerController : MonoBehaviour
 
         if (hit)
         {
-            // Only save displacement if we just hit ground from a fall
-            if (!isGrounded)
-            {
-                displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
-            }
+            displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
             isGrounded = true;
         }
         else
@@ -135,20 +128,20 @@ public class PlayerController : MonoBehaviour
     {
         if (
             playerStateManager.CurrentState == PlayerState.Crouch
-            && boxCollider != crouchedCollider
+            && currentCollider != crouchedCollider
         ) // Crouching and need to change collider to crouched
         {
             crouchedCollider.enabled = true;
-            boxCollider = crouchedCollider;
+            currentCollider = crouchedCollider;
             uncrouchedCollider.enabled = false;
         }
         else if (
             playerStateManager.CurrentState != PlayerState.Crouch
-            && boxCollider != uncrouchedCollider
+            && currentCollider != uncrouchedCollider
         ) // Not crouching and need to revert collider to uncrouched
         {
             uncrouchedCollider.enabled = true;
-            boxCollider = uncrouchedCollider;
+            currentCollider = uncrouchedCollider;
             crouchedCollider.enabled = false;
         }
     }
