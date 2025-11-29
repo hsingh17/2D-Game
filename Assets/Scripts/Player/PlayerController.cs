@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,13 +21,10 @@ public class PlayerController : MonoBehaviour
     private LayerMask groundMask;
 
     [SerializeField]
-    private Collider2D uncrouchedCollider;
+    private Collider2D standingCollider;
 
     [SerializeField]
     private Collider2D crouchedCollider;
-
-    [SerializeField]
-    private BoxCastProperties boxCastProperties;
 
     #endregion
 
@@ -96,21 +94,19 @@ public class PlayerController : MonoBehaviour
         Bounds colliderBounds = currentCollider.bounds;
         Vector3 colliderCenter = colliderBounds.center;
         Vector3 colliderExtents = colliderBounds.extents;
-        Vector3 colliderSize = colliderBounds.size;
 
-        RaycastHit2D hit = Physics2D.BoxCast(
-            boxCastProperties.CalculateBoxCastOrigin(colliderCenter, colliderExtents),
-            boxCastProperties.CalculateBoxCastSize(colliderSize),
-            0f,
+        RaycastHit2D hit = Physics2D.CircleCast(
+            colliderCenter,
+            colliderExtents.y,
             Vector2.down,
-            boxCastProperties.BoxCastDistance,
+            0.1f,
             groundMask
         );
 
         if (hit)
         {
-            displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
             isGrounded = true;
+            displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
         }
         else
         {
@@ -133,15 +129,15 @@ public class PlayerController : MonoBehaviour
         {
             crouchedCollider.enabled = true;
             currentCollider = crouchedCollider;
-            uncrouchedCollider.enabled = false;
+            standingCollider.enabled = false;
         }
         else if (
             playerStateManager.CurrentState != PlayerState.Crouch
-            && currentCollider != uncrouchedCollider
-        ) // Not crouching and need to revert collider to uncrouched
+            && currentCollider != standingCollider
+        ) // Not crouching and need to revert collider to standing
         {
-            uncrouchedCollider.enabled = true;
-            currentCollider = uncrouchedCollider;
+            standingCollider.enabled = true;
+            currentCollider = standingCollider;
             crouchedCollider.enabled = false;
         }
     }
