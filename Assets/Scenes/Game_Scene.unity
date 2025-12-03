@@ -53739,7 +53739,7 @@ Transform:
   m_GameObject: {fileID: 337472372}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.189999, y: 3, z: -10}
+  m_LocalPosition: {x: -3, y: 3.06, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -53945,7 +53945,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 3.9
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -53970,7 +53970,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.409999, y: 3.34, z: -10}
+  m_LocalPosition: {x: -3.05, y: 1.47, z: -51.071575}
   m_LocalScale: {x: 1, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -53988,8 +53988,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92240db09d193d3489d99546690b0869, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  offset: {x: 0, y: -1, z: 0}
   target: {fileID: 337472373}
   smoothTime: 0.2
+  backgroundTilemap: {fileID: 156247638}
 --- !u!1 &519545766
 GameObject:
   m_ObjectHideFlags: 0

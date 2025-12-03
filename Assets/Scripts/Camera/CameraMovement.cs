@@ -17,11 +17,11 @@ public class CameraMovement : MonoBehaviour
     private Tilemap backgroundTilemap;
 
     private Vector3 velocity = Vector3.zero;
-    private Camera camera;
+    private Camera cam;
 
-    private void Start()
+    private void Awake()
     {
-        camera = gameObject.GetComponent<Camera>();
+        cam = Camera.main;
     }
 
     private void LateUpdate()
@@ -31,16 +31,16 @@ public class CameraMovement : MonoBehaviour
 
     private void FollowTarget()
     {
-        Debug.Log($"{camera.orthographicSize}");
         // Don't move camera if not inside the bounds of the background
         if (!TileMapContainsCamera())
         {
             return;
         }
 
-        Vector3 currentPos = transform.position;
-        Vector3 targetPos = target.transform.position + offset;
+        // TODO: Camera still moves ever so slightly out of bounds. Need to do clamping instead I think
 
+        Vector3 targetPos = target.transform.position + offset;
+        Vector3 currentPos = transform.position;
         currentPos.z = targetPos.z;
 
         transform.position = Vector3.SmoothDamp(
@@ -53,16 +53,18 @@ public class CameraMovement : MonoBehaviour
 
     private bool TileMapContainsCamera()
     {
-        return true;
-        // Bounds tilemapBounds = backgroundTilemap.localBounds;
-        // Vector3 currentPos = transform.position;
-        // Vector3 top = transform.position;
-        // Vector3 bottom;
-        // Vector3 left;
-        // Vector3 right;
-        // return tilemapBounds.Contains()
-        //     && tilemapBounds.Contains()
-        //     && tilemapBounds.Contains()
-        //     && tilemapBounds.Contains();
+        Bounds tilemapBounds = backgroundTilemap.localBounds;
+        Vector3 currentPos = transform.position;
+        currentPos.z = tilemapBounds.center.z;
+
+        Vector3 top = currentPos + Vector3.up * cam.orthographicSize;
+        Vector3 bottom = currentPos + Vector3.down * cam.orthographicSize;
+        Vector3 left = currentPos + cam.aspect * cam.orthographicSize * Vector3.left;
+        Vector3 right = currentPos + cam.aspect * cam.orthographicSize * Vector3.right;
+
+        return tilemapBounds.Contains(top)
+            && tilemapBounds.Contains(bottom)
+            && tilemapBounds.Contains(left)
+            && tilemapBounds.Contains(right);
     }
 }

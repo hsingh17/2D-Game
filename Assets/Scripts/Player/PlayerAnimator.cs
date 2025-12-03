@@ -23,11 +23,20 @@ public class PlayerAnimator : MonoBehaviour
 
     #endregion
 
-    private void Start()
+    private void Awake()
     {
         animator = gameObject.GetComponent<Animator>();
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+    }
+
+    private void OnEnable()
+    {
         PlayerStateManager.onStateUpdate += AnimateOnPlayerStateChange;
+    }
+
+    private void OnDisable()
+    {
+        PlayerStateManager.onStateUpdate -= AnimateOnPlayerStateChange;
     }
 
     private void AnimateOnPlayerStateChange(PlayerState state)

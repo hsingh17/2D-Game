@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
 
     #region MonoBehavior Functions
 
-    private void Start()
+    private void Awake()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         playerStateManager = gameObject.GetComponent<PlayerStateManager>();
