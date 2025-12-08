@@ -33,15 +33,7 @@ public class CameraMovement : MonoBehaviour
 
     private void FollowTarget()
     {
-        // Don't move camera if not inside the bounds of the background
-        if (!ClampCameraToBounds())
-        {
-            return;
-        }
-
-        // TODO: Camera still moves ever so slightly out of bounds. Need to do clamping instead I think
-
-        Vector3 targetPos = target.transform.position + offset;
+        Vector3 targetPos = RestrictCameraToBounds(target.transform.position + offset);
         Vector3 currentPos = transform.position;
         currentPos.z = targetPos.z;
 
@@ -53,20 +45,18 @@ public class CameraMovement : MonoBehaviour
         );
     }
 
-    private bool ClampCameraToBounds()
+    private Vector3 RestrictCameraToBounds(Vector3 targetPos)
+    {
+        targetPos.y += CalculateBoundsDelta(targetPos + Vector3.up * camExtents.y).y; // Top
+        targetPos.y += CalculateBoundsDelta(targetPos + Vector3.down * camExtents.y).y; // Bottom
+        targetPos.x += CalculateBoundsDelta(targetPos + camExtents.x * Vector3.left).x; // Left
+        targetPos.x += CalculateBoundsDelta(targetPos + camExtents.x * Vector3.right).x; // Right
+        return targetPos;
+    }
+
+    private Vector3 CalculateBoundsDelta(Vector3 point)
     {
         Bounds bounds = worldBounds.bounds;
-        Vector3 currentPos = transform.position;
-        currentPos.z = bounds.center.z;
-
-        Vector3 top = currentPos + Vector3.up * camExtents.y;
-        Vector3 bottom = currentPos + Vector3.down * camExtents.y;
-        Vector3 left = currentPos + camExtents.x * Vector3.left;
-        Vector3 right = currentPos + camExtents.x * Vector3.right;
-
-        return bounds.Contains(top)
-            && bounds.Contains(bottom)
-            && bounds.Contains(left)
-            && bounds.Contains(right);
+        return bounds.ClosestPoint(point) - point;
     }
 }
