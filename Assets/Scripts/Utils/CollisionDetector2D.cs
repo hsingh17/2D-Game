@@ -43,15 +43,15 @@ public class CollisionDetector2D
         Vector2 direction
     )
     {
-        if (hit)
-        {
-            isGrounded = true;
-            displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
-        }
-        else
-        {
-            isGrounded = false;
-        }
+        // if (hit)
+        // {
+        //     isGrounded = true;
+        //     displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
+        // }
+        // else
+        // {
+        //     isGrounded = false;
+        // }
         return 0;
     }
 }
