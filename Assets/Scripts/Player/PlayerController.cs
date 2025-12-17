@@ -91,27 +91,36 @@ public class PlayerController : MonoBehaviour
 
     private void CheckGrounded()
     {
-        Bounds colliderBounds = currentCollider.bounds;
-        Vector3 colliderCenter = colliderBounds.center;
-        Vector3 colliderExtents = colliderBounds.extents;
-
-        RaycastHit2D hit = Physics2D.CircleCast(
-            colliderCenter,
-            colliderExtents.y,
+        CollisionDetector2D.CollisionDetect2D detect = CollisionDetector2D.CheckCircleCollision2D(
+            currentCollider,
             Vector2.down,
             0.1f,
             groundMask
         );
 
-        if (hit)
-        {
-            isGrounded = true;
-            displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
-        }
-        else
-        {
-            isGrounded = false;
-        }
+        isGrounded = detect.Hit;
+        displacementToGround = detect.HitDistance;
+        // Bounds colliderBounds = currentCollider.bounds;
+        // Vector3 colliderCenter = colliderBounds.center;
+        // Vector3 colliderExtents = colliderBounds.extents;
+
+        // RaycastHit2D hit = Physics2D.CircleCast(
+        //     colliderCenter,
+        //     colliderExtents.y,
+        //     Vector2.down,
+        //     0.1f,
+        //     groundMask
+        // );
+
+        // if (hit)
+        // {
+        //     isGrounded = true;
+        //     displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
+        // }
+        // else
+        // {
+        //     isGrounded = false;
+        // }
     }
 
     private void DoAction()

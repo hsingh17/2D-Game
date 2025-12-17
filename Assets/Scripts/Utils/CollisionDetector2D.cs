@@ -43,15 +43,17 @@ public class CollisionDetector2D
         Vector2 direction
     )
     {
-        // if (hit)
-        // {
-        //     isGrounded = true;
-        //     displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
-        // }
-        // else
-        // {
-        //     isGrounded = false;
-        // }
-        return 0;
+        if (!hit)
+        {
+            return 0;
+        }
+
+        Bounds colliderBounds = collider.bounds;
+        Vector3 absDirVector = VectorUtils.ComponentAbsoluteValue(direction);
+        float hitDotProduct = Vector3.Dot(hit.point, absDirVector);
+        float centerDotProduct = Vector3.Dot(colliderBounds.center, absDirVector);
+        float extentsDotProduct = Vector3.Dot(colliderBounds.extents, direction);
+
+        return hitDotProduct - (centerDotProduct + extentsDotProduct);
     }
 }
