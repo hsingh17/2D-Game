@@ -1,1 +1,1 @@
-public class PlayerStateManager : StateManager<PlayerState> { }
+public class PlayerAnimationStateManager : StateManager<PlayerAnimationState> { }

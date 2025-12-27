@@ -31,41 +31,41 @@ public class PlayerAnimator : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerStateManager.onStateUpdate += AnimateOnPlayerStateChange;
+        PlayerAnimationStateManager.onStateUpdate += AnimateOnPlayerStateChange;
     }
 
     private void OnDisable()
     {
-        PlayerStateManager.onStateUpdate -= AnimateOnPlayerStateChange;
+        PlayerAnimationStateManager.onStateUpdate -= AnimateOnPlayerStateChange;
     }
 
-    private void AnimateOnPlayerStateChange(PlayerState state)
+    private void AnimateOnPlayerStateChange(PlayerAnimationState state)
     {
         switch (state)
         {
-            case PlayerState.Idle:
+            case PlayerAnimationState.Idle:
                 animator.CrossFade(idle, 0, 0);
                 break;
-            case PlayerState.MoveLeft:
-            case PlayerState.MoveRight:
+            case PlayerAnimationState.MoveLeft:
+            case PlayerAnimationState.MoveRight:
                 animator.CrossFade(run, 0, 0);
                 FlipSprite(state);
                 break;
-            case PlayerState.Jumping:
+            case PlayerAnimationState.Jumping:
                 animator.CrossFade(jump, 0, 0);
                 break;
-            case PlayerState.Fall:
+            case PlayerAnimationState.Fall:
                 animator.CrossFade(fall, 0, 0);
                 break;
-            case PlayerState.Crouch:
+            case PlayerAnimationState.Crouch:
                 animator.CrossFade(crouch, 0, 0);
                 break;
         }
     }
 
-    private void FlipSprite(PlayerState state)
+    private void FlipSprite(PlayerAnimationState state)
     {
-        bool movingRight = state == PlayerState.MoveRight;
+        bool movingRight = state == PlayerAnimationState.MoveRight;
         // Player movement direction does not align with the direction of sprite
         if (!spriteRenderer.flipX && !movingRight || spriteRenderer.flipX && movingRight)
         {

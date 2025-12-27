@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     #region Private Variables
 
     private Collider2D currentCollider;
-    private PlayerStateManager playerStateManager;
+    private PlayerAnimationStateManager playerAnimationStateManager;
     private Vector2 movement;
     private float startJumpY;
 
@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
-        playerStateManager = gameObject.GetComponent<PlayerStateManager>();
+        playerAnimationStateManager = gameObject.GetComponent<PlayerAnimationStateManager>();
         currentCollider = crouchedCollider;
         hitCheck = new Dictionary<Vector2, CollisionDetector2D.CollisionDetect2D>();
     }
@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
     private void Crouch()
     {
         if (
-            playerStateManager.CurrentState == PlayerState.Crouch
+            playerAnimationStateManager.CurrentState == PlayerAnimationState.Crouch
             && currentCollider != crouchedCollider
         ) // Crouching and need to change collider to crouched
         {
@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour
             standingCollider.enabled = false;
         }
         else if (
-            playerStateManager.CurrentState != PlayerState.Crouch
+            playerAnimationStateManager.CurrentState != PlayerAnimationState.Crouch
             && currentCollider != standingCollider
         ) // Not crouching and need to revert collider to standing
         {
@@ -137,18 +137,18 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        PlayerState curState = playerStateManager.CurrentState;
+        PlayerAnimationState curState = playerAnimationStateManager.CurrentState;
 
         // No moving during crouch
-        if (curState == PlayerState.Crouch)
+        if (curState == PlayerAnimationState.Crouch)
         {
             return;
         }
 
         // No moving horizontally if we detected a collision with ground
         if (
-            (curState == PlayerState.MoveLeft && !CanMoveHorizontal(Vector2.left))
-            || (curState == PlayerState.MoveRight && !CanMoveHorizontal(Vector2.right))
+            (movement.x == -1 && !CanMoveHorizontal(Vector2.left))
+            || (movement.x == 1 && !CanMoveHorizontal(Vector2.right))
         )
         {
             movement.x = 0;
@@ -169,17 +169,17 @@ public class PlayerController : MonoBehaviour
     private float GetYMovement()
     {
         if (
-            playerStateManager.CurrentState == PlayerState.StartJump
-            || playerStateManager.CurrentState == PlayerState.Jumping
+            playerAnimationStateManager.CurrentState == PlayerAnimationState.StartJump
+            || playerAnimationStateManager.CurrentState == PlayerAnimationState.Jumping
         )
         {
-            if (playerStateManager.CurrentState == PlayerState.StartJump)
+            if (playerAnimationStateManager.CurrentState == PlayerAnimationState.StartJump)
             {
                 startJumpY = rb.position.y;
             }
             return SolveKinematicsEquation(entityScriptableObject.jumpSpeed, 0);
         }
-        else if (playerStateManager.CurrentState == PlayerState.Fall)
+        else if (playerAnimationStateManager.CurrentState == PlayerAnimationState.Fall)
         {
             return GetGravityMovement();
         }
@@ -216,28 +216,28 @@ public class PlayerController : MonoBehaviour
     {
         if (IsFalling())
         {
-            playerStateManager.CurrentState = PlayerState.Fall;
+            playerAnimationStateManager.CurrentState = PlayerAnimationState.Fall;
         }
         else if (IsIdling())
         {
-            playerStateManager.CurrentState = PlayerState.Idle;
+            playerAnimationStateManager.CurrentState = PlayerAnimationState.Idle;
         }
         else if (IsCrouching())
         {
-            playerStateManager.CurrentState = PlayerState.Crouch;
+            playerAnimationStateManager.CurrentState = PlayerAnimationState.Crouch;
         }
         else if (IsStartingJump())
         {
-            playerStateManager.CurrentState = PlayerState.StartJump;
+            playerAnimationStateManager.CurrentState = PlayerAnimationState.StartJump;
         }
         else if (IsJumping())
         {
-            playerStateManager.CurrentState = PlayerState.Jumping;
+            playerAnimationStateManager.CurrentState = PlayerAnimationState.Jumping;
         }
         else if (IsMoving())
         {
-            playerStateManager.CurrentState =
-                movement.x > 0 ? PlayerState.MoveRight : PlayerState.MoveLeft;
+            playerAnimationStateManager.CurrentState =
+                movement.x > 0 ? PlayerAnimationState.MoveRight : PlayerAnimationState.MoveLeft;
         }
     }
 
@@ -245,8 +245,8 @@ public class PlayerController : MonoBehaviour
     {
         bool notGroundedAndNotJumping =
             !IsGrounded()
-            && playerStateManager.CurrentState != PlayerState.StartJump
-            && playerStateManager.CurrentState != PlayerState.Jumping;
+            && playerAnimationStateManager.CurrentState != PlayerAnimationState.StartJump
+            && playerAnimationStateManager.CurrentState != PlayerAnimationState.Jumping;
 
         return notGroundedAndNotJumping || ReachedMaxJump();
     }
@@ -271,8 +271,8 @@ public class PlayerController : MonoBehaviour
         return !IsGrounded()
             && !ReachedMaxJump()
             && (
-                playerStateManager.CurrentState == PlayerState.StartJump
-                || playerStateManager.CurrentState == PlayerState.Jumping
+                playerAnimationStateManager.CurrentState == PlayerAnimationState.StartJump
+                || playerAnimationStateManager.CurrentState == PlayerAnimationState.Jumping
             );
     }
 
@@ -283,7 +283,7 @@ public class PlayerController : MonoBehaviour
 
     private bool ReachedMaxJump()
     {
-        if (playerStateManager.CurrentState == PlayerState.Jumping)
+        if (playerAnimationStateManager.CurrentState == PlayerAnimationState.Jumping)
         {
             return rb.position.y - startJumpY >= entityScriptableObject.jumpHeight;
         }
