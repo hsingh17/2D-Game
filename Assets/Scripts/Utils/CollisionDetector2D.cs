@@ -5,7 +5,7 @@ public class CollisionDetector2D
     public struct CollisionDetect2D
     {
         public bool Hit { get; }
-        public float HitDistance { get; }
+        public float HitDistance { get; set; }
 
         public CollisionDetect2D(bool hit, float hitDistance)
         {
@@ -14,7 +14,49 @@ public class CollisionDetector2D
         }
     };
 
-    public static CollisionDetect2D CheckCircleCollision2D(
+    public static CollisionDetect2D CheckBoxCollision(
+        Collider2D collider,
+        float angle,
+        Vector2 direction,
+        float distance,
+        LayerMask mask
+    )
+    {
+        Bounds colliderBounds = collider.bounds;
+        Vector3 colliderCenter = colliderBounds.center;
+        Vector3 colliderExtents = colliderBounds.extents;
+
+        RaycastHit2D hit = Physics2D.BoxCast(
+            colliderCenter,
+            colliderExtents,
+            angle,
+            direction,
+            distance,
+            mask
+        );
+
+        float hitDistance = CalculateHitDistance(hit, collider, direction);
+        return new CollisionDetect2D(hit, hitDistance);
+    }
+
+    public static CollisionDetect2D CheckRayCastCollision(
+        Collider2D collider,
+        Vector2 direction,
+        float distance,
+        LayerMask mask
+    )
+    {
+        Bounds colliderBounds = collider.bounds;
+        Vector3 colliderCenter = colliderBounds.center;
+        Vector3 colliderExtents = colliderBounds.extents;
+
+        RaycastHit2D hit = Physics2D.Raycast(colliderCenter, direction, distance, mask);
+
+        float hitDistance = CalculateHitDistance(hit, collider, direction);
+        return new CollisionDetect2D(hit, hitDistance);
+    }
+
+    public static CollisionDetect2D CheckCircleCollision(
         Collider2D collider,
         Vector2 direction,
         float radius,

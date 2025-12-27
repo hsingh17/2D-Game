@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -33,10 +36,9 @@ public class PlayerController : MonoBehaviour
     private Collider2D currentCollider;
     private PlayerStateManager playerStateManager;
     private Vector2 movement;
-    private bool isGrounded;
     private float startJumpY;
-    private bool reachedMaxJump;
-    private float displacementToGround;
+
+    private Dictionary<Vector2, CollisionDetector2D.CollisionDetect2D> hitCheck;
 
     #endregion
 
@@ -51,6 +53,7 @@ public class PlayerController : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
         playerStateManager = gameObject.GetComponent<PlayerStateManager>();
         currentCollider = crouchedCollider;
+        hitCheck = new Dictionary<Vector2, CollisionDetector2D.CollisionDetect2D>();
     }
 
     private void Update()
@@ -60,8 +63,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        CheckIfReachMaxJumpHeight();
-        CheckGrounded();
+        CheckCollisions();
         UpdatePlayerState();
         DoAction();
     }
@@ -74,53 +76,35 @@ public class PlayerController : MonoBehaviour
     {
         movement = moveAction.action.ReadValue<Vector2>();
         // Y movement can only happen when on the ground (e.g: jumping and crouching)
-        movement.y = isGrounded ? movement.y : 0;
+        movement.y = IsGrounded() ? movement.y : 0;
     }
 
-    private void CheckIfReachMaxJumpHeight()
+    private void CheckCollisions()
     {
-        if (playerStateManager.CurrentState == PlayerState.Jumping)
-        {
-            reachedMaxJump = rb.position.y - startJumpY >= entityScriptableObject.jumpHeight;
-        }
-        else
-        {
-            reachedMaxJump = false;
-        }
-    }
-
-    private void CheckGrounded()
-    {
-        CollisionDetector2D.CollisionDetect2D detect = CollisionDetector2D.CheckCircleCollision2D(
+        hitCheck[Vector2.down] = CollisionDetector2D.CheckCircleCollision(
             currentCollider,
             Vector2.down,
             0.1f,
             groundMask
         );
 
-        isGrounded = detect.Hit;
-        displacementToGround = detect.HitDistance;
-        // Bounds colliderBounds = currentCollider.bounds;
-        // Vector3 colliderCenter = colliderBounds.center;
-        // Vector3 colliderExtents = colliderBounds.extents;
+        hitCheck[Vector2.right] = CollisionDetector2D.CheckRayCastCollision(
+            currentCollider,
+            Vector2.right,
+            0.3f,
+            groundMask
+        );
 
-        // RaycastHit2D hit = Physics2D.CircleCast(
-        //     colliderCenter,
-        //     colliderExtents.y,
-        //     Vector2.down,
-        //     0.1f,
-        //     groundMask
-        // );
+        hitCheck[Vector2.left] = CollisionDetector2D.CheckRayCastCollision(
+            currentCollider,
+            Vector2.left,
+            0.3f,
+            groundMask
+        );
 
-        // if (hit)
-        // {
-        //     isGrounded = true;
-        //     displacementToGround = hit.point.y - (colliderCenter.y - colliderExtents.y);
-        // }
-        // else
-        // {
-        //     isGrounded = false;
-        // }
+        Debug.Log(
+            $"Down: {hitCheck[Vector2.down].Hit}. Right: {hitCheck[Vector2.right].Hit}. Left: {hitCheck[Vector2.left].Hit}"
+        );
     }
 
     private void DoAction()
@@ -153,13 +137,24 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        if (playerStateManager.CurrentState == PlayerState.Crouch)
+        PlayerState curState = playerStateManager.CurrentState;
+
+        // No moving during crouch
+        if (curState == PlayerState.Crouch)
         {
             return;
         }
 
-        movement.y = 1;
+        // No moving horizontally if we detected a collision with ground
+        if (
+            (curState == PlayerState.MoveLeft && !CanMoveHorizontal(Vector2.left))
+            || (curState == PlayerState.MoveRight && !CanMoveHorizontal(Vector2.right))
+        )
+        {
+            movement.x = 0;
+        }
 
+        movement.y = 1;
         Vector2 curPosition = rb.position;
         Vector2 change = new(entityScriptableObject.speed * Time.fixedDeltaTime, GetYMovement());
         Vector2 nextPosition = curPosition + (change * movement);
@@ -188,21 +183,15 @@ public class PlayerController : MonoBehaviour
         {
             return GetGravityMovement();
         }
-        else if (displacementToGround != 0)
-        {
-            float ret = displacementToGround;
-            displacementToGround = 0;
-            return ret;
-        }
         else
         {
-            return 0;
+            return GetSnapToGroundDistance();
         }
     }
 
     private float GetGravityMovement()
     {
-        if (isGrounded)
+        if (IsGrounded())
         {
             return 0;
         }
@@ -225,11 +214,11 @@ public class PlayerController : MonoBehaviour
 
     private void UpdatePlayerState()
     {
-        if (IsFall())
+        if (IsFalling())
         {
             playerStateManager.CurrentState = PlayerState.Fall;
         }
-        else if (IsIdle())
+        else if (IsIdling())
         {
             playerStateManager.CurrentState = PlayerState.Idle;
         }
@@ -237,7 +226,7 @@ public class PlayerController : MonoBehaviour
         {
             playerStateManager.CurrentState = PlayerState.Crouch;
         }
-        else if (IsStartJump())
+        else if (IsStartingJump())
         {
             playerStateManager.CurrentState = PlayerState.StartJump;
         }
@@ -252,19 +241,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private bool IsFall()
+    private bool IsFalling()
     {
         bool notGroundedAndNotJumping =
-            !isGrounded
+            !IsGrounded()
             && playerStateManager.CurrentState != PlayerState.StartJump
             && playerStateManager.CurrentState != PlayerState.Jumping;
 
-        return notGroundedAndNotJumping || reachedMaxJump;
+        return notGroundedAndNotJumping || ReachedMaxJump();
     }
 
-    private bool IsIdle()
+    private bool IsIdling()
     {
-        return isGrounded && movement == Vector2.zero;
+        return IsGrounded() && movement == Vector2.zero;
     }
 
     private bool IsMoving()
@@ -272,15 +261,15 @@ public class PlayerController : MonoBehaviour
         return movement.y == 0 && movement.x != 0;
     }
 
-    private bool IsStartJump()
+    private bool IsStartingJump()
     {
-        return isGrounded && movement.y == 1;
+        return IsGrounded() && movement.y == 1;
     }
 
     private bool IsJumping()
     {
-        return !isGrounded
-            && !reachedMaxJump
+        return !IsGrounded()
+            && !ReachedMaxJump()
             && (
                 playerStateManager.CurrentState == PlayerState.StartJump
                 || playerStateManager.CurrentState == PlayerState.Jumping
@@ -289,7 +278,58 @@ public class PlayerController : MonoBehaviour
 
     private bool IsCrouching()
     {
-        return isGrounded && movement.y == -1;
+        return IsGrounded() && movement.y == -1;
+    }
+
+    private bool ReachedMaxJump()
+    {
+        if (playerStateManager.CurrentState == PlayerState.Jumping)
+        {
+            return rb.position.y - startJumpY >= entityScriptableObject.jumpHeight;
+        }
+        return false;
+    }
+
+    private bool IsGrounded()
+    {
+        if (hitCheck.ContainsKey(Vector2.down))
+        {
+            return hitCheck[Vector2.down].Hit;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private float GetSnapToGroundDistance()
+    {
+        if (!hitCheck.ContainsKey(Vector2.down))
+        {
+            return 0;
+        }
+
+        CollisionDetector2D.CollisionDetect2D hitDetect = hitCheck[Vector2.down];
+        float ret = hitDetect.HitDistance < 0 ? hitDetect.HitDistance : 0;
+        hitDetect.HitDistance = 0;
+        return ret;
+    }
+
+    private bool CanMoveHorizontal(Vector2 dir)
+    {
+        if (dir != Vector2.left && dir != Vector2.right)
+        {
+            throw new ArgumentException("Argument must be Vector2.left or Vector2.right");
+        }
+
+        if (!hitCheck.ContainsKey(dir))
+        {
+            return true;
+        }
+        else
+        {
+            return !hitCheck[dir].Hit;
+        }
     }
 
     #endregion
