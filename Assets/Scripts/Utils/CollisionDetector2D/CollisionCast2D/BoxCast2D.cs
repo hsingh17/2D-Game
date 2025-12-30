@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public struct BoxCast2D : ICollisionCast2D
+public class BoxCast2D : CollisionCast2D
 {
     public Collider2D Collider { get; set; }
     public float Angle { get; set; }
@@ -21,5 +21,22 @@ public struct BoxCast2D : ICollisionCast2D
         Direction = direction;
         Distance = distance;
         Mask = mask;
+    }
+
+    public BoxCast2D(
+        Collider2D collider,
+        float angle,
+        Vector2 direction,
+        float distance,
+        LayerMask mask,
+        string descriptor
+    )
+    {
+        Collider = collider;
+        Angle = angle;
+        Direction = direction;
+        Distance = distance;
+        Mask = mask;
+        Descriptor = descriptor;
     }
 }

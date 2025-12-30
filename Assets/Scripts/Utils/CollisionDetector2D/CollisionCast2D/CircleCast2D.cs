@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public class CircleCast2D : ICollisionCast2D
+public class CircleCast2D : CollisionCast2D
 {
     public Collider2D Collider { get; set; }
     public Vector2 Direction { get; set; }
@@ -13,5 +14,20 @@ public class CircleCast2D : ICollisionCast2D
         Direction = direction;
         Radius = radius;
         Mask = mask;
+    }
+
+    public CircleCast2D(
+        Collider2D collider,
+        Vector2 direction,
+        float radius,
+        LayerMask mask,
+        string descriptor
+    )
+    {
+        Collider = collider;
+        Direction = direction;
+        Radius = radius;
+        Mask = mask;
+        Descriptor = descriptor;
     }
 }
