@@ -1,20 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class CollisionDetector2D
+public class CollisionDetector2D : MonoBehaviour
 {
-    public struct CollisionDetect2D
-    {
-        public bool Hit { get; }
-        public float HitDistance { get; set; }
+    public bool DrawCollisions { get; set; }
 
-        public CollisionDetect2D(bool hit, float hitDistance)
-        {
-            Hit = hit;
-            HitDistance = hitDistance;
-        }
-    };
-
-    public static CollisionDetect2D CheckBoxCollision(
+    public CollisionDetect2D CheckBoxCollision(
         Collider2D collider,
         float angle,
         Vector2 direction,
@@ -36,10 +27,11 @@ public class CollisionDetector2D
         );
 
         float hitDistance = CalculateHitDistance(hit, collider, direction);
+
         return new CollisionDetect2D(hit, hitDistance);
     }
 
-    public static CollisionDetect2D CheckRayCastCollision(
+    public CollisionDetect2D CheckRayCastCollision(
         Collider2D collider,
         Vector2 direction,
         float distance,
@@ -48,15 +40,15 @@ public class CollisionDetector2D
     {
         Bounds colliderBounds = collider.bounds;
         Vector3 colliderCenter = colliderBounds.center;
-        Vector3 colliderExtents = colliderBounds.extents;
 
         RaycastHit2D hit = Physics2D.Raycast(colliderCenter, direction, distance, mask);
 
         float hitDistance = CalculateHitDistance(hit, collider, direction);
+
         return new CollisionDetect2D(hit, hitDistance);
     }
 
-    public static CollisionDetect2D CheckCircleCollision(
+    public CollisionDetect2D CheckCircleCollision(
         Collider2D collider,
         Vector2 direction,
         float radius,
@@ -79,11 +71,7 @@ public class CollisionDetector2D
         return new CollisionDetect2D(hit, hitDistance);
     }
 
-    private static float CalculateHitDistance(
-        RaycastHit2D hit,
-        Collider2D collider,
-        Vector2 direction
-    )
+    private float CalculateHitDistance(RaycastHit2D hit, Collider2D collider, Vector2 direction)
     {
         if (!hit)
         {
@@ -98,4 +86,6 @@ public class CollisionDetector2D
 
         return hitDotProduct - (centerDotProduct + extentsDotProduct);
     }
+
+    private void OnDrawGizmos() { }
 }

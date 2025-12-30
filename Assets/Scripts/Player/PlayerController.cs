@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     #region Class Variables
 
-    #region SerializeableFields
+    #region Serializeable Fields
 
     [SerializeField]
     private EntityScriptableObject entityScriptableObject;
@@ -29,6 +29,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Collider2D crouchedCollider;
 
+    [SerializeField]
+    private bool drawCollisions;
+
     #endregion
 
     #region Private Variables
@@ -38,7 +41,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 movement;
     private float startJumpY;
 
-    private Dictionary<Vector2, CollisionDetector2D.CollisionDetect2D> hitCheck;
+    private Dictionary<Vector2, CollisionDetect2D> hitCheck;
+    private CollisionDetector2D collisionDetector2D;
 
     #endregion
 
@@ -53,7 +57,11 @@ public class PlayerController : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
         playerAnimationStateManager = gameObject.GetComponent<PlayerAnimationStateManager>();
         currentCollider = crouchedCollider;
-        hitCheck = new Dictionary<Vector2, CollisionDetector2D.CollisionDetect2D>();
+        hitCheck = new Dictionary<Vector2, CollisionDetect2D>();
+
+        collisionDetector2D = gameObject.AddComponent<CollisionDetector2D>();
+        collisionDetector2D.DrawCollisions = drawCollisions;
+        Debug.Log(collisionDetector2D.DrawCollisions);
     }
 
     private void Update()
@@ -81,29 +89,25 @@ public class PlayerController : MonoBehaviour
 
     private void CheckCollisions()
     {
-        hitCheck[Vector2.down] = CollisionDetector2D.CheckCircleCollision(
+        hitCheck[Vector2.down] = collisionDetector2D.CheckCircleCollision(
             currentCollider,
             Vector2.down,
             0.1f,
             groundMask
         );
 
-        hitCheck[Vector2.right] = CollisionDetector2D.CheckRayCastCollision(
+        hitCheck[Vector2.right] = collisionDetector2D.CheckRayCastCollision(
             currentCollider,
             Vector2.right,
             0.3f,
             groundMask
         );
 
-        hitCheck[Vector2.left] = CollisionDetector2D.CheckRayCastCollision(
+        hitCheck[Vector2.left] = collisionDetector2D.CheckRayCastCollision(
             currentCollider,
             Vector2.left,
             0.3f,
             groundMask
-        );
-
-        Debug.Log(
-            $"Down: {hitCheck[Vector2.down].Hit}. Right: {hitCheck[Vector2.right].Hit}. Left: {hitCheck[Vector2.left].Hit}"
         );
     }
 
@@ -309,7 +313,7 @@ public class PlayerController : MonoBehaviour
             return 0;
         }
 
-        CollisionDetector2D.CollisionDetect2D hitDetect = hitCheck[Vector2.down];
+        CollisionDetect2D hitDetect = hitCheck[Vector2.down];
         float ret = hitDetect.HitDistance < 0 ? hitDetect.HitDistance : 0;
         hitDetect.HitDistance = 0;
         return ret;
