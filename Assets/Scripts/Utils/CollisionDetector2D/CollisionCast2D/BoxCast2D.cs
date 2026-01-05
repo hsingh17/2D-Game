@@ -13,21 +13,6 @@ public class BoxCast2D : CollisionCast2D
         float angle,
         Vector2 direction,
         float distance,
-        LayerMask mask
-    )
-    {
-        Collider = collider;
-        Angle = angle;
-        Direction = direction;
-        Distance = distance;
-        Mask = mask;
-    }
-
-    public BoxCast2D(
-        Collider2D collider,
-        float angle,
-        Vector2 direction,
-        float distance,
         LayerMask mask,
         string descriptor
     )

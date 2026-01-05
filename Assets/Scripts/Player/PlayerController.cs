@@ -61,7 +61,6 @@ public class PlayerController : MonoBehaviour
 
         collisionDetector2D = gameObject.AddComponent<CollisionDetector2D>();
         collisionDetector2D.DrawCollisions = drawCollisions;
-        Debug.Log(collisionDetector2D.DrawCollisions);
     }
 
     private void Update()

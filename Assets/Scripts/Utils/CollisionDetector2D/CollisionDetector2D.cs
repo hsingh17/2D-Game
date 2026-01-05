@@ -1,18 +1,39 @@
+using System;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
 public class CollisionDetector2D : MonoBehaviour
 {
     public bool DrawCollisions { get; set; }
 
-    public CollisionDetect2D CheckBoxCollision(
-        Collider2D collider,
-        float angle,
-        Vector2 direction,
-        float distance,
-        LayerMask mask
-    )
+    private readonly List<CollisionCast2D> collisions;
+    private readonly Dictionary<CollisionCast2D, CollisionDetect2D> collisionResults;
+
+    public CollisionDetector2D(List<CollisionCast2D> collisions)
     {
+        this.collisions = collisions;
+    }
+
+    public void CheckAllCollisions()
+    {
+        foreach (CollisionCast2D cast in collisions)
+        {
+            if (cast is BoxCast2D) { CheckBoxCollision(cast)}
+            else if (cast is CircleCast2D) { CheckCircleCollision(cast)}
+            else if (cast is RayCast2D) { CheckRayCastCollision(cast)}
+            else
+            {
+                throw new NotImplementedException(
+                    $"Unable to handle collision of class {cast.GetType().Name}"
+                );
+            }
+        }
+    }
+
+    public CollisionDetect2D CheckBoxCollision(BoxCast2D boxCast2d)
+    {
+        return new CollisionDetect2D();
         Bounds colliderBounds = collider.bounds;
         Vector3 colliderCenter = colliderBounds.center;
         Vector3 colliderExtents = colliderBounds.extents;
@@ -31,13 +52,9 @@ public class CollisionDetector2D : MonoBehaviour
         return new CollisionDetect2D(hit, hitDistance);
     }
 
-    public CollisionDetect2D CheckRayCastCollision(
-        Collider2D collider,
-        Vector2 direction,
-        float distance,
-        LayerMask mask
-    )
+    public CollisionDetect2D CheckRayCastCollision(RayCast2D rayCast2D)
     {
+        return new CollisionDetect2D();
         Bounds colliderBounds = collider.bounds;
         Vector3 colliderCenter = colliderBounds.center;
 
@@ -48,13 +65,9 @@ public class CollisionDetector2D : MonoBehaviour
         return new CollisionDetect2D(hit, hitDistance);
     }
 
-    public CollisionDetect2D CheckCircleCollision(
-        Collider2D collider,
-        Vector2 direction,
-        float radius,
-        LayerMask mask
-    )
+    public CollisionDetect2D CheckCircleCollision(CircleCast2D circleCast2D)
     {
+        return new CollisionDetect2D();
         Bounds colliderBounds = collider.bounds;
         Vector3 colliderCenter = colliderBounds.center;
         Vector3 colliderExtents = colliderBounds.extents;
