@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using NUnit.Framework.Interfaces;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class CollisionDetector2D : MonoBehaviour
 {
     public bool DrawCollisions { get; set; }
-
     private readonly HashSet<CollisionCast2D> collisions;
-    private readonly Dictionary<CollisionCast2D, CollisionDetect2D> collisionResults;
+    private readonly Dictionary<string, CollisionDetect2D> collisionResults;
 
     public CollisionDetector2D(List<CollisionCast2D> collisions)
     {
@@ -51,7 +49,7 @@ public class CollisionDetector2D : MonoBehaviour
                 );
             }
 
-            collisionResults[cast] = collisionDetect2D;
+            collisionResults[cast.Descriptor] = collisionDetect2D;
         }
     }
 
@@ -111,6 +109,28 @@ public class CollisionDetector2D : MonoBehaviour
 
         float hitDistance = CalculateHitDistance(hit, collider, circleCast2D.Direction);
         return new CollisionDetect2D(hit, hitDistance);
+    }
+
+    public bool DidCollisionHit(string collisionDescriptor)
+    {
+        return collisionResults.ContainsKey(collisionDescriptor);
+    }
+
+    public CollisionDetect2D? GetCollisionResult(string collisionDescriptor)
+    {
+        if (
+            collisionResults.TryGetValue(
+                collisionDescriptor,
+                out CollisionDetect2D collisionDetect2D
+            )
+        )
+        {
+            return collisionDetect2D;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     private float CalculateHitDistance(RaycastHit2D hit, Collider2D collider, Vector2 direction)
