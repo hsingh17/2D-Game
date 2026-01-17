@@ -31,12 +31,12 @@ public class PlayerAnimator : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerAnimationStateManager.OnStateUpdate += AnimateOnPlayerStateChange;
+        PlayerAnimationStateManager.onStateUpdate += AnimateOnPlayerStateChange;
     }
 
     private void OnDisable()
     {
-        PlayerAnimationStateManager.OnStateUpdate -= AnimateOnPlayerStateChange;
+        PlayerAnimationStateManager.onStateUpdate -= AnimateOnPlayerStateChange;
     }
 
     private void AnimateOnPlayerStateChange(PlayerAnimationState state)

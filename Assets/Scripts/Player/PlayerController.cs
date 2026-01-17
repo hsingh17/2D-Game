@@ -88,26 +88,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckCollisions()
     {
-        hitCheck[Vector2.down] = collisionDetector2D.CheckCircleCollision(
-            currentCollider,
-            Vector2.down,
-            0.1f,
-            groundMask
-        );
-
-        hitCheck[Vector2.right] = collisionDetector2D.CheckRayCastCollision(
-            currentCollider,
-            Vector2.right,
-            0.3f,
-            groundMask
-        );
-
-        hitCheck[Vector2.left] = collisionDetector2D.CheckRayCastCollision(
-            currentCollider,
-            Vector2.left,
-            0.3f,
-            groundMask
-        );
+        collisionDetector2D.CheckAllCollisions();
     }
 
     private void DoAction()
