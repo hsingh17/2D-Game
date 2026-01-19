@@ -53769,6 +53769,14 @@ MonoBehaviour:
   standingCollider: {fileID: 519545768}
   crouchedCollider: {fileID: 640553840}
   drawCollisions: 1
+  collisionCast2Ds:
+  - rid: -2
+  - rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &337472375
 MonoBehaviour:
   m_ObjectHideFlags: 0

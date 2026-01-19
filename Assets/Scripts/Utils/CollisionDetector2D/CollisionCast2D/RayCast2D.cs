@@ -1,11 +1,15 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class RayCast2D : CollisionCast2D
 {
-    public Collider2D Collider { get; set; }
-    public Vector2 Direction { get; set; }
-    public float Distance { get; set; }
-    public LayerMask Mask { get; set; }
+    public Collider2D Collider;
+    public Vector2 Direction;
+    public float Distance;
+    public LayerMask Mask;
+
+    public RayCast2D() { }
 
     public RayCast2D(
         Collider2D collider,

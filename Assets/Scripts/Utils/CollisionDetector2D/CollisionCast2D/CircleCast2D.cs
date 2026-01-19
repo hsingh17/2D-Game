@@ -1,12 +1,15 @@
 using System;
 using UnityEngine;
 
+[Serializable]
 public class CircleCast2D : CollisionCast2D
 {
-    public Collider2D Collider { get; set; }
-    public Vector2 Direction { get; set; }
-    public float Radius { get; set; }
-    public LayerMask Mask { get; set; }
+    public Collider2D Collider;
+    public Vector2 Direction;
+    public float Radius;
+    public LayerMask Mask;
+
+    public CircleCast2D() { }
 
     public CircleCast2D(
         Collider2D collider,

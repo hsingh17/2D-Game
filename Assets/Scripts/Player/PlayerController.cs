@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,6 +29,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private bool drawCollisions;
+
+    [SerializeReference, SubclassSelector]
+    private List<CollisionCast2D> collisionCast2Ds;
 
     #endregion
 

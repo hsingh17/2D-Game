@@ -1,6 +1,9 @@
-public class CollisionCast2D
+using System;
+
+[Serializable]
+public abstract class CollisionCast2D
 {
-    public string Descriptor { get; set; }
+    public string Descriptor;
 
     public override bool Equals(object obj)
     {

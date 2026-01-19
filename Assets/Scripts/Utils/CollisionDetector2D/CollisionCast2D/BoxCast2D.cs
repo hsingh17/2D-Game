@@ -1,12 +1,16 @@
+using System;
 using UnityEngine;
 
+[Serializable]
 public class BoxCast2D : CollisionCast2D
 {
-    public Collider2D Collider { get; set; }
-    public float Angle { get; set; }
-    public Vector2 Direction { get; set; }
-    public float Distance { get; set; }
-    public LayerMask Mask { get; set; }
+    public Collider2D Collider;
+    public float Angle;
+    public Vector2 Direction;
+    public float Distance;
+    public LayerMask Mask;
+
+    public BoxCast2D() { }
 
     public BoxCast2D(
         Collider2D collider,
