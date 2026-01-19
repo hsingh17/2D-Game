@@ -4,10 +4,7 @@ using UnityEngine;
 [Serializable]
 public class CircleCast2D : CollisionCast2D
 {
-    public Collider2D Collider;
-    public Vector2 Direction;
     public float Radius;
-    public LayerMask Mask;
 
     public CircleCast2D() { }
 

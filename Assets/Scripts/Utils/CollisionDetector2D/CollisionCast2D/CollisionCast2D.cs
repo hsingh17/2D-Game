@@ -1,9 +1,15 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public abstract class CollisionCast2D
 {
     public string Descriptor;
+    public Collider2D Collider;
+
+    public Vector2 Direction;
+
+    public LayerMask Mask;
 
     public override bool Equals(object obj)
     {

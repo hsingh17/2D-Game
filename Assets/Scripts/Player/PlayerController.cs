@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,7 +32,7 @@ public class PlayerController : MonoBehaviour
     private bool drawCollisions;
 
     [SerializeReference, SubclassSelector]
-    private List<CollisionCast2D> collisionCast2Ds;
+    private List<CollisionCast2D> collisions;
 
     #endregion
 
@@ -41,8 +42,6 @@ public class PlayerController : MonoBehaviour
     private PlayerAnimationStateManager playerAnimationStateManager;
     private Vector2 movement;
     private float startJumpY;
-
-    private Dictionary<Vector2, CollisionDetect2D> hitCheck;
     private CollisionDetector2D collisionDetector2D;
 
     #endregion
@@ -57,11 +56,12 @@ public class PlayerController : MonoBehaviour
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         playerAnimationStateManager = gameObject.GetComponent<PlayerAnimationStateManager>();
-        currentCollider = crouchedCollider;
-        hitCheck = new Dictionary<Vector2, CollisionDetect2D>();
+
+        currentCollider = standingCollider;
 
         collisionDetector2D = gameObject.AddComponent<CollisionDetector2D>();
         collisionDetector2D.DrawCollisions = drawCollisions;
+        collisionDetector2D.AddCollisions(collisions);
     }
 
     private void Update()
@@ -118,6 +118,8 @@ public class PlayerController : MonoBehaviour
             currentCollider = standingCollider;
             crouchedCollider.enabled = false;
         }
+
+        collisionDetector2D.UpdateColliderForCollisions(currentCollider);
     }
 
     private void Move()
@@ -277,44 +279,47 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        if (hitCheck.ContainsKey(Vector2.down))
-        {
-            return hitCheck[Vector2.down].Hit;
-        }
-        else
-        {
-            return false;
-        }
+        // if (hitCheck.ContainsKey(Vector2.down))
+        // {
+        //     return hitCheck[Vector2.down].Hit;
+        // }
+        // else
+        // {
+        //     return false;
+        // }
+        return true;
     }
 
     private float GetSnapToGroundDistance()
     {
-        if (!hitCheck.ContainsKey(Vector2.down))
-        {
-            return 0;
-        }
+        // if (!hitCheck.ContainsKey(Vector2.down))
+        // {
+        //     return 0;
+        // }
 
-        CollisionDetect2D hitDetect = hitCheck[Vector2.down];
-        float ret = hitDetect.HitDistance < 0 ? hitDetect.HitDistance : 0;
-        hitDetect.HitDistance = 0;
-        return ret;
+        // CollisionDetect2D hitDetect = hitCheck[Vector2.down];
+        // float ret = hitDetect.HitDistance < 0 ? hitDetect.HitDistance : 0;
+        // hitDetect.HitDistance = 0;
+        // return ret;
+        return 0f;
     }
 
     private bool CanMoveHorizontal(Vector2 dir)
     {
-        if (dir != Vector2.left && dir != Vector2.right)
-        {
-            throw new ArgumentException("Argument must be Vector2.left or Vector2.right");
-        }
+        // if (dir != Vector2.left && dir != Vector2.right)
+        // {
+        //     throw new ArgumentException("Argument must be Vector2.left or Vector2.right");
+        // }
 
-        if (!hitCheck.ContainsKey(dir))
-        {
-            return true;
-        }
-        else
-        {
-            return !hitCheck[dir].Hit;
-        }
+        // if (!hitCheck.ContainsKey(dir))
+        // {
+        //     return true;
+        // }
+        // else
+        // {
+        //     return !hitCheck[dir].Hit;
+        // }
+        return false;
     }
 
     #endregion

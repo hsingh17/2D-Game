@@ -4,11 +4,8 @@ using UnityEngine;
 [Serializable]
 public class BoxCast2D : CollisionCast2D
 {
-    public Collider2D Collider;
     public float Angle;
-    public Vector2 Direction;
     public float Distance;
-    public LayerMask Mask;
 
     public BoxCast2D() { }
 

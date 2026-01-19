@@ -5,27 +5,37 @@ using UnityEngine;
 public class CollisionDetector2D : MonoBehaviour
 {
     public bool DrawCollisions { get; set; }
-    private readonly HashSet<CollisionCast2D> collisions;
-    private readonly Dictionary<string, CollisionDetect2D> collisionResults;
+    public HashSet<CollisionCast2D> Collisions { get; set; }
+    private readonly Dictionary<string, CollisionDetect2D> collisionResults = new();
 
-    public CollisionDetector2D(List<CollisionCast2D> collisions)
+    public void AddCollisions(List<CollisionCast2D> collisions)
     {
+        Collisions ??= new();
+
         foreach (CollisionCast2D cast in collisions)
         {
-            if (collisions.Contains(cast))
+            if (Collisions.Contains(cast))
             {
                 throw new Exception(
                     $"Duplicate collision with descriptor {cast.Descriptor} found!"
                 );
             }
-        }
 
-        collisionResults = new();
+            Collisions.Add(cast);
+        }
+    }
+
+    public void UpdateColliderForCollisions(Collider2D newCollider)
+    {
+        foreach (CollisionCast2D cast in Collisions)
+        {
+            cast.Collider = newCollider;
+        }
     }
 
     public void CheckAllCollisions()
     {
-        foreach (CollisionCast2D cast in collisions)
+        foreach (CollisionCast2D cast in Collisions)
         {
             CollisionDetect2D collisionDetect2D;
 

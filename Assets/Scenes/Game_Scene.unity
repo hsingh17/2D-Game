@@ -53769,14 +53769,43 @@ MonoBehaviour:
   standingCollider: {fileID: 519545768}
   crouchedCollider: {fileID: 640553840}
   drawCollisions: 1
-  collisionCast2Ds:
-  - rid: -2
-  - rid: -2
+  collisions:
+  - rid: 2724369261694550212
+  - rid: 2724369261694550214
+  - rid: 2724369261694550215
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+    - rid: 2724369261694550212
+      type: {class: CircleCast2D, ns: , asm: Assembly-CSharp}
+      data:
+        Descriptor: GroundCast
+        Collider: {fileID: 519545768}
+        Direction: {x: 0, y: -1}
+        Mask:
+          serializedVersion: 2
+          m_Bits: 0
+        Radius: 0.1
+    - rid: 2724369261694550214
+      type: {class: RayCast2D, ns: , asm: Assembly-CSharp}
+      data:
+        Descriptor: RightCheck
+        Collider: {fileID: 519545768}
+        Direction: {x: 1, y: 0}
+        Mask:
+          serializedVersion: 2
+          m_Bits: 0
+        Distance: 0.3
+    - rid: 2724369261694550215
+      type: {class: RayCast2D, ns: , asm: Assembly-CSharp}
+      data:
+        Descriptor: LeftCheck
+        Collider: {fileID: 519545768}
+        Direction: {x: -1, y: 0}
+        Mask:
+          serializedVersion: 2
+          m_Bits: 0
+        Distance: 0.3
 --- !u!114 &337472375
 MonoBehaviour:
   m_ObjectHideFlags: 0
