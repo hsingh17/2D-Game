@@ -159,5 +159,27 @@ public class CollisionDetector2D : MonoBehaviour
         return hitDotProduct - (centerDotProduct + extentsDotProduct);
     }
 
-    private void OnDrawGizmos() { }
+    // TODO: Probably put this in its own class, once working
+    private void OnDrawGizmos()
+    {
+        foreach (CollisionCast2D collision in Collisions)
+        {
+            Gizmos.color = Color.red; // Default red color, indicating no hit
+            CollisionDetect2D? detect = GetCollisionResult(collision.Descriptor);
+
+            // Green for hit
+            if (detect.HasValue && detect.Value.Hit)
+            {
+                Gizmos.color = Color.green;
+            }
+
+            if (collision is BoxCast2D boxCast2D) { }
+            else if (collision is CircleCast2D circleCast2D) { }
+            else if (collision is RayCast2D rayCast2D) { }
+            else
+            {
+                Debug.LogWarning($"Unable to draw collision of class {collision.GetType().Name}");
+            }
+        }
+    }
 }
