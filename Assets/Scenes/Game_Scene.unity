@@ -53739,7 +53739,7 @@ Transform:
   m_GameObject: {fileID: 337472372}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3, y: 3.06, z: -10}
+  m_LocalPosition: {x: -3.08, y: 4.19, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -53779,13 +53779,13 @@ MonoBehaviour:
     - rid: 2724369261694550212
       type: {class: CircleCast2D, ns: , asm: Assembly-CSharp}
       data:
-        Descriptor: GroundCast
+        Descriptor: GroundCheck
         Collider: {fileID: 519545768}
         Direction: {x: 0, y: -1}
         Mask:
           serializedVersion: 2
-          m_Bits: 0
-        Radius: 0.1
+          m_Bits: 128
+        Radius: 1
     - rid: 2724369261694550214
       type: {class: RayCast2D, ns: , asm: Assembly-CSharp}
       data:
@@ -53794,7 +53794,7 @@ MonoBehaviour:
         Direction: {x: 1, y: 0}
         Mask:
           serializedVersion: 2
-          m_Bits: 0
+          m_Bits: 128
         Distance: 0.3
     - rid: 2724369261694550215
       type: {class: RayCast2D, ns: , asm: Assembly-CSharp}
@@ -53804,7 +53804,7 @@ MonoBehaviour:
         Direction: {x: -1, y: 0}
         Mask:
           serializedVersion: 2
-          m_Bits: 0
+          m_Bits: 128
         Distance: 0.3
 --- !u!114 &337472375
 MonoBehaviour:

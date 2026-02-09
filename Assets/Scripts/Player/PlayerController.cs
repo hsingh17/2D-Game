@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -56,7 +58,6 @@ public class PlayerController : MonoBehaviour
         playerAnimationStateManager = gameObject.GetComponent<PlayerAnimationStateManager>();
 
         currentCollider = standingCollider;
-
         collisionDetector2D = gameObject.AddComponent<CollisionDetector2D>();
         collisionDetector2D.DrawCollisions = drawCollisions;
         collisionDetector2D.AddCollisions(collisions);
@@ -295,8 +296,20 @@ public class PlayerController : MonoBehaviour
 
     private bool CanMoveHorizontal(Vector2 dir)
     {
-        return collisionDetector2D.DidCollisionHit("RightCheck")
-            || collisionDetector2D.DidCollisionHit("LeftCheck");
+        if (dir == Vector2.left)
+        {
+            return collisionDetector2D.DidCollisionHit("LeftCheck");
+        }
+        else if (dir == Vector2.right)
+        {
+            return collisionDetector2D.DidCollisionHit("RightCheck");
+        }
+        else
+        {
+            throw new ArgumentException(
+                $"Called CanMoveHorizontal with non-horizontal vector: {dir}"
+            );
+        }
     }
 
     #endregion
