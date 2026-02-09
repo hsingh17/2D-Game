@@ -279,47 +279,26 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        // if (hitCheck.ContainsKey(Vector2.down))
-        // {
-        //     return hitCheck[Vector2.down].Hit;
-        // }
-        // else
-        // {
-        //     return false;
-        // }
-        return true;
+        return collisionDetector2D.DidCollisionHit("GroundCheck");
     }
 
     private float GetSnapToGroundDistance()
     {
-        // if (!hitCheck.ContainsKey(Vector2.down))
-        // {
-        //     return 0;
-        // }
-
-        // CollisionDetect2D hitDetect = hitCheck[Vector2.down];
-        // float ret = hitDetect.HitDistance < 0 ? hitDetect.HitDistance : 0;
-        // hitDetect.HitDistance = 0;
-        // return ret;
-        return 0f;
+        CollisionDetect2D? detect = collisionDetector2D.GetCollisionResult("GroundCheck");
+        if (detect.HasValue)
+        {
+            return detect.Value.HitDistance;
+        }
+        else
+        {
+            return 0f;
+        }
     }
 
     private bool CanMoveHorizontal(Vector2 dir)
     {
-        // if (dir != Vector2.left && dir != Vector2.right)
-        // {
-        //     throw new ArgumentException("Argument must be Vector2.left or Vector2.right");
-        // }
-
-        // if (!hitCheck.ContainsKey(dir))
-        // {
-        //     return true;
-        // }
-        // else
-        // {
-        //     return !hitCheck[dir].Hit;
-        // }
-        return false;
+        return collisionDetector2D.DidCollisionHit("RightCheck")
+            || collisionDetector2D.DidCollisionHit("LeftCheck");
     }
 
     #endregion

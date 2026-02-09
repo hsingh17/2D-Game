@@ -120,11 +120,6 @@ public class CollisionDetector2D : MonoBehaviour
         return new CollisionDetect2D(hit, hitDistance);
     }
 
-    public bool DidCollisionHit(string collisionDescriptor)
-    {
-        return collisionResults.ContainsKey(collisionDescriptor);
-    }
-
     public CollisionDetect2D? GetCollisionResult(string collisionDescriptor)
     {
         if (
@@ -140,6 +135,12 @@ public class CollisionDetector2D : MonoBehaviour
         {
             return null;
         }
+    }
+
+    public bool DidCollisionHit(string collisionDescriptor)
+    {
+        CollisionDetect2D? collisionDetect2D = GetCollisionResult(collisionDescriptor);
+        return collisionDetect2D.HasValue && collisionDetect2D.Value.Hit;
     }
 
     private float CalculateHitDistance(RaycastHit2D hit, Collider2D collider, Vector2 direction)
