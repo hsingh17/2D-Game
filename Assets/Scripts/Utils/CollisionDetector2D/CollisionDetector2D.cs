@@ -160,12 +160,20 @@ public class CollisionDetector2D : MonoBehaviour
         return hitDotProduct - (centerDotProduct + extentsDotProduct);
     }
 
-    // TODO: Probably put this in its own class, once working
     private void OnDrawGizmos()
     {
+        if (!DrawCollisions)
+        {
+            return;
+        }
+
         foreach (CollisionCast2D collision in Collisions)
         {
-            Gizmos.color = Color.red; // Default red color, indicating no hit
+            // In blue, draw the start of the cast
+            Gizmos.color = Color.blue;
+            DrawCast(collision);
+
+            // Now draw the end of the cast
             CollisionDetect2D? detect = GetCollisionResult(collision.Descriptor);
 
             // Green for hit
@@ -173,14 +181,41 @@ public class CollisionDetector2D : MonoBehaviour
             {
                 Gizmos.color = Color.green;
             }
-
-            if (collision is BoxCast2D boxCast2D) { }
-            else if (collision is CircleCast2D circleCast2D) { }
-            else if (collision is RayCast2D rayCast2D) { }
             else
             {
-                Debug.LogWarning($"Unable to draw collision of class {collision.GetType().Name}");
+                Gizmos.color = Color.red;
             }
+
+            DrawCast(collision);
+        }
+    }
+
+    private void DrawCast(CollisionCast2D collision)
+    {
+        Vector3 center = collision.Collider.bounds.center;
+        Vector3 extents = collision.Collider.bounds.extents;
+        Vector3 size = new(extents.x, extents.y, 0.01f);
+        if (collision is BoxCast2D)
+        {
+            Gizmos.DrawCube(center, size);
+        }
+        else if (collision is CircleCast2D circleCast)
+        {
+            Gizmos.DrawSphere(center, circleCast.Radius);
+        }
+        else if (collision is RayCast2D rayCast)
+        {
+            Vector3 toVector =
+                center
+                + (
+                    new Vector3(collision.Direction.x, collision.Direction.y, 0.01f)
+                    * rayCast.Distance
+                );
+            Gizmos.DrawRay(center, toVector);
+        }
+        else
+        {
+            Debug.LogWarning($"Unable to draw collision of class {collision.GetType().Name}");
         }
     }
 }
