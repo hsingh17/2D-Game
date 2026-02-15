@@ -53785,7 +53785,7 @@ MonoBehaviour:
         Mask:
           serializedVersion: 2
           m_Bits: 128
-        Radius: 1
+        Radius: 0.3
     - rid: 2724369261694550214
       type: {class: RayCast2D, ns: , asm: Assembly-CSharp}
       data:
@@ -53795,7 +53795,7 @@ MonoBehaviour:
         Mask:
           serializedVersion: 2
           m_Bits: 128
-        Distance: 0.3
+        Distance: 10
     - rid: 2724369261694550215
       type: {class: RayCast2D, ns: , asm: Assembly-CSharp}
       data:
@@ -53805,7 +53805,7 @@ MonoBehaviour:
         Mask:
           serializedVersion: 2
           m_Bits: 128
-        Distance: 0.3
+        Distance: 1
 --- !u!114 &337472375
 MonoBehaviour:
   m_ObjectHideFlags: 0

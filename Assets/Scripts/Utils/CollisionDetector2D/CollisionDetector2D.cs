@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class CollisionDetector2D : MonoBehaviour
@@ -195,23 +196,19 @@ public class CollisionDetector2D : MonoBehaviour
         Vector3 center = collision.Collider.bounds.center;
         Vector3 extents = collision.Collider.bounds.extents;
         Vector3 size = new(extents.x, extents.y, 0.01f);
+        center.z = 0;
+
         if (collision is BoxCast2D)
         {
-            Gizmos.DrawCube(center, size);
+            Gizmos.DrawWireCube(center, size);
         }
         else if (collision is CircleCast2D circleCast)
         {
-            Gizmos.DrawSphere(center, circleCast.Radius);
+            Gizmos.DrawWireSphere(center, circleCast.Radius);
         }
-        else if (collision is RayCast2D rayCast)
+        else if (collision is RayCast2D)
         {
-            Vector3 toVector =
-                center
-                + (
-                    new Vector3(collision.Direction.x, collision.Direction.y, 0.01f)
-                    * rayCast.Distance
-                );
-            Gizmos.DrawRay(center, toVector);
+            Gizmos.DrawRay(center, collision.Direction);
         }
         else
         {
