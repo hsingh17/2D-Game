@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // No moving horizontally if we detected a collision with ground
+        // No moving horizontally if we detected a collision
         if (
             (movement.x == -1 && !CanMoveHorizontal(Vector2.left))
             || (movement.x == 1 && !CanMoveHorizontal(Vector2.right))
@@ -144,6 +144,8 @@ public class PlayerController : MonoBehaviour
         Vector2 curPosition = rb.position;
         Vector2 change = new(entityScriptableObject.speed * Time.fixedDeltaTime, GetYMovement());
         Vector2 nextPosition = curPosition + (change * movement);
+
+        Logger.Log($"Current Pos: {curPosition}. Final Pos: {nextPosition}");
 
         rb.MovePosition(nextPosition);
 
@@ -296,13 +298,15 @@ public class PlayerController : MonoBehaviour
 
     private bool CanMoveHorizontal(Vector2 dir)
     {
+        bool collisionDetected;
+
         if (dir == Vector2.left)
         {
-            return collisionDetector2D.DidCollisionHit("LeftCheck");
+            collisionDetected = collisionDetector2D.DidCollisionHit("LeftCheck");
         }
         else if (dir == Vector2.right)
         {
-            return collisionDetector2D.DidCollisionHit("RightCheck");
+            collisionDetected = collisionDetector2D.DidCollisionHit("RightCheck");
         }
         else
         {
@@ -310,6 +314,10 @@ public class PlayerController : MonoBehaviour
                 $"Called CanMoveHorizontal with non-horizontal vector: {dir}"
             );
         }
+
+        Logger.Log($"Direction: {dir} Can Move: {!collisionDetected}");
+
+        return !collisionDetected;
     }
 
     #endregion

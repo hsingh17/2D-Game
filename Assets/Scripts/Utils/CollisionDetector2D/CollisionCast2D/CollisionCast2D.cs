@@ -1,4 +1,5 @@
 using System;
+using NUnit.Framework.Internal;
 using UnityEngine;
 
 [Serializable]
@@ -23,5 +24,11 @@ public abstract class CollisionCast2D
     public override int GetHashCode()
     {
         return Descriptor.GetHashCode();
+    }
+
+    public override string ToString()
+    {
+        return $"Descriptor: {Descriptor}\nCollider: {Collider.name}\n"
+            + "Direction: {Direction}\nMask: {LayerMask.LayerToName(Mask)}\n";
     }
 }

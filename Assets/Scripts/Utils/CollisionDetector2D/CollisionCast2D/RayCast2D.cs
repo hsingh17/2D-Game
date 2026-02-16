@@ -22,4 +22,9 @@ public class RayCast2D : CollisionCast2D
         Mask = mask;
         Descriptor = descriptor;
     }
+
+    public override string ToString()
+    {
+        return $"{base.ToString()}\nDistance: {Distance}";
+    }
 }

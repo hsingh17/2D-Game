@@ -8,4 +8,16 @@ public struct CollisionDetect2D
         Hit = hit;
         HitDistance = hitDistance;
     }
+
+    public override readonly string ToString()
+    {
+        if (Hit)
+        {
+            return $"Collision detected at {HitDistance} units away";
+        }
+        else
+        {
+            return "No collision detected";
+        }
+    }
 };

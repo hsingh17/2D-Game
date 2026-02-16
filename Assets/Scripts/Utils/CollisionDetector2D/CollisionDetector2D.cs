@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 public class CollisionDetector2D : MonoBehaviour
@@ -41,17 +39,17 @@ public class CollisionDetector2D : MonoBehaviour
         {
             CollisionDetect2D collisionDetect2D;
 
-            if (cast is BoxCast2D boxCast2D)
+            if (cast is BoxCast2D boxCast)
             {
-                collisionDetect2D = CheckBoxCollision(boxCast2D);
+                collisionDetect2D = CheckBoxCollision(boxCast);
             }
-            else if (cast is CircleCast2D circleCast2D)
+            else if (cast is CircleCast2D circleCast)
             {
-                collisionDetect2D = CheckCircleCollision(circleCast2D);
+                collisionDetect2D = CheckCircleCollision(circleCast);
             }
-            else if (cast is RayCast2D rayCast2D)
+            else if (cast is RayCast2D rayCast)
             {
-                collisionDetect2D = CheckRayCastCollision(rayCast2D);
+                collisionDetect2D = CheckRayCastCollision(rayCast);
             }
             else
             {
@@ -61,6 +59,8 @@ public class CollisionDetector2D : MonoBehaviour
             }
 
             collisionResults[cast.Descriptor] = collisionDetect2D;
+
+            Logger.Log($"{cast}\n{collisionDetect2D}");
         }
     }
 
@@ -196,7 +196,7 @@ public class CollisionDetector2D : MonoBehaviour
         Vector3 center = collision.Collider.bounds.center;
         Vector3 extents = collision.Collider.bounds.extents;
         Vector3 size = new(extents.x, extents.y, 0.01f);
-        center.z = 0;
+        center.z = 10;
 
         if (collision is BoxCast2D)
         {
@@ -206,9 +206,9 @@ public class CollisionDetector2D : MonoBehaviour
         {
             Gizmos.DrawWireSphere(center, circleCast.Radius);
         }
-        else if (collision is RayCast2D)
+        else if (collision is RayCast2D rayCast)
         {
-            Gizmos.DrawRay(center, collision.Direction);
+            Gizmos.DrawRay(center, collision.Direction * rayCast.Distance);
         }
         else
         {
