@@ -33,6 +33,19 @@ public class CircleCast2D : CollisionCast2D
         return Physics2D.CircleCast(colliderCenter, Radius, Direction, Distance, Mask);
     }
 
+    public override void DrawGizmos()
+    {
+        Vector3 center = Collider.bounds.center;
+        center.z = 0;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(center, Radius);
+        center += new Vector3(Direction.x, Direction.y) * Distance;
+        Gizmos.DrawWireSphere(center, Radius);
+
+        base.DrawGizmos();
+    }
+
     public override string ToString()
     {
         return $"{base.ToString()}\nRadius: {Radius}";

@@ -28,4 +28,15 @@ public class RayCast2D : CollisionCast2D
         Vector3 colliderCenter = colliderBounds.center;
         return Physics2D.Raycast(colliderCenter, Direction, Distance, Mask);
     }
+
+    public override void DrawGizmos()
+    {
+        Vector3 center = Collider.bounds.center;
+        center.z = 0;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(center, Direction * Distance);
+
+        base.DrawGizmos();
+    }
 }

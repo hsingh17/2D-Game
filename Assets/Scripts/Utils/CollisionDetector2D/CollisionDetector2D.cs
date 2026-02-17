@@ -39,9 +39,11 @@ public class CollisionDetector2D : MonoBehaviour
         {
             RaycastHit2D hit = cast.CheckCollision();
             float hitDistance = CalculateHitDistance(hit, cast.Collider, cast.Direction);
-            CollisionDetect2D collisionDetect2D = new(hit, hitDistance);
-            collisionResults[cast.Descriptor] = collisionDetect2D;
-            Logger.Log($"{cast}\n{collisionDetect2D}");
+
+            cast.Hit = hit;
+            cast.HitDistance = hitDistance;
+
+            Logger.Log($"{cast}");
         }
     }
 
@@ -91,57 +93,7 @@ public class CollisionDetector2D : MonoBehaviour
 
         foreach (CollisionCast2D collision in Collisions)
         {
-            // In blue, draw the start of the cast
-            Gizmos.color = Color.blue;
-            DrawCast(collision);
-
-            // Now draw the end of the cast
-            CollisionDetect2D? detect = GetCollisionResult(collision.Descriptor);
-
-            // Green for hit
-            if (detect.HasValue && detect.Value.Hit)
-            {
-                Gizmos.color = Color.green;
-            }
-            else
-            {
-                Gizmos.color = Color.red;
-            }
-
-            DrawCast(collision, false);
-        }
-    }
-
-    private void DrawCast(CollisionCast2D collision, bool isStart = true)
-    {
-        Vector3 center = collision.Collider.bounds.center;
-        Vector3 extents = collision.Collider.bounds.extents;
-        Vector3 size = new(extents.x, extents.y, 0.01f);
-
-        // We're drawing the end of the cast, so we need to add distance travelled
-        if (!isStart)
-        {
-            center += (
-                new Vector3(collision.Direction.x, collision.Direction.y) * collision.Distance
-            );
-        }
-
-        center.z = 0;
-        if (collision is BoxCast2D)
-        {
-            Gizmos.DrawWireCube(center, size);
-        }
-        else if (collision is CircleCast2D circleCast)
-        {
-            Gizmos.DrawWireSphere(center, circleCast.Radius);
-        }
-        else if (collision is RayCast2D)
-        {
-            Gizmos.DrawRay(center, collision.Direction);
-        }
-        else
-        {
-            Logger.LogWarning($"Unable to draw collision of class {collision.GetType().Name}");
+            collision.DrawGizmos();
         }
     }
 }

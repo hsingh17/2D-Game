@@ -39,6 +39,21 @@ public class BoxCast2D : CollisionCast2D
         );
     }
 
+    public override void DrawGizmos()
+    {
+        Vector3 center = Collider.bounds.center;
+        Vector3 extents = Collider.bounds.extents;
+        Vector3 size = new(extents.x, extents.y, 0.01f);
+        center.z = 0;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(center, size);
+        center += new Vector3(Direction.x, Direction.y) * Distance;
+        Gizmos.DrawWireCube(center, size);
+
+        base.DrawGizmos();
+    }
+
     public override string ToString()
     {
         return $"{base.ToString()}\nAngle: {Angle}";
