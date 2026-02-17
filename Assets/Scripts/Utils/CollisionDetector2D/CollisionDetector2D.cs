@@ -37,89 +37,12 @@ public class CollisionDetector2D : MonoBehaviour
     {
         foreach (CollisionCast2D cast in Collisions)
         {
-            CollisionDetect2D collisionDetect2D;
-
-            if (cast is BoxCast2D boxCast)
-            {
-                collisionDetect2D = CheckBoxCollision(boxCast);
-            }
-            else if (cast is CircleCast2D circleCast)
-            {
-                collisionDetect2D = CheckCircleCollision(circleCast);
-            }
-            else if (cast is RayCast2D rayCast)
-            {
-                collisionDetect2D = CheckRayCastCollision(rayCast);
-            }
-            else
-            {
-                throw new NotImplementedException(
-                    $"Unable to handle collision of class {cast.GetType().Name}"
-                );
-            }
-
+            RaycastHit2D hit = cast.CheckCollision();
+            float hitDistance = CalculateHitDistance(hit, cast.Collider, cast.Direction);
+            CollisionDetect2D collisionDetect2D = new(hit, hitDistance);
             collisionResults[cast.Descriptor] = collisionDetect2D;
-
             Logger.Log($"{cast}\n{collisionDetect2D}");
         }
-    }
-
-    public CollisionDetect2D CheckBoxCollision(BoxCast2D boxCast2D)
-    {
-        Collider2D collider = boxCast2D.Collider;
-        Bounds colliderBounds = collider.bounds;
-        Vector3 colliderCenter = colliderBounds.center;
-        Vector3 colliderExtents = colliderBounds.extents;
-
-        RaycastHit2D hit = Physics2D.BoxCast(
-            colliderCenter,
-            colliderExtents,
-            boxCast2D.Angle,
-            boxCast2D.Direction,
-            boxCast2D.Distance,
-            boxCast2D.Mask
-        );
-
-        float hitDistance = CalculateHitDistance(hit, collider, boxCast2D.Direction);
-
-        return new CollisionDetect2D(hit, hitDistance);
-    }
-
-    public CollisionDetect2D CheckRayCastCollision(RayCast2D rayCast2D)
-    {
-        Collider2D collider = rayCast2D.Collider;
-        Bounds colliderBounds = collider.bounds;
-        Vector3 colliderCenter = colliderBounds.center;
-
-        RaycastHit2D hit = Physics2D.Raycast(
-            colliderCenter,
-            rayCast2D.Direction,
-            rayCast2D.Distance,
-            rayCast2D.Mask
-        );
-
-        float hitDistance = CalculateHitDistance(hit, collider, rayCast2D.Direction);
-
-        return new CollisionDetect2D(hit, hitDistance);
-    }
-
-    public CollisionDetect2D CheckCircleCollision(CircleCast2D circleCast2D)
-    {
-        Collider2D collider = circleCast2D.Collider;
-        Bounds colliderBounds = collider.bounds;
-        Vector3 colliderCenter = colliderBounds.center;
-        Vector3 colliderExtents = colliderBounds.extents;
-
-        RaycastHit2D hit = Physics2D.CircleCast(
-            colliderCenter,
-            colliderExtents.y,
-            circleCast2D.Direction,
-            circleCast2D.Radius,
-            circleCast2D.Mask
-        );
-
-        float hitDistance = CalculateHitDistance(hit, collider, circleCast2D.Direction);
-        return new CollisionDetect2D(hit, hitDistance);
     }
 
     public CollisionDetect2D? GetCollisionResult(string collisionDescriptor)
@@ -133,10 +56,8 @@ public class CollisionDetector2D : MonoBehaviour
         {
             return collisionDetect2D;
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     public bool DidCollisionHit(string collisionDescriptor)
@@ -187,17 +108,25 @@ public class CollisionDetector2D : MonoBehaviour
                 Gizmos.color = Color.red;
             }
 
-            DrawCast(collision);
+            DrawCast(collision, false);
         }
     }
 
-    private void DrawCast(CollisionCast2D collision)
+    private void DrawCast(CollisionCast2D collision, bool isStart = true)
     {
         Vector3 center = collision.Collider.bounds.center;
         Vector3 extents = collision.Collider.bounds.extents;
         Vector3 size = new(extents.x, extents.y, 0.01f);
-        center.z = 10;
 
+        // We're drawing the end of the cast, so we need to add distance travelled
+        if (!isStart)
+        {
+            center += (
+                new Vector3(collision.Direction.x, collision.Direction.y) * collision.Distance
+            );
+        }
+
+        center.z = 0;
         if (collision is BoxCast2D)
         {
             Gizmos.DrawWireCube(center, size);
@@ -206,13 +135,13 @@ public class CollisionDetector2D : MonoBehaviour
         {
             Gizmos.DrawWireSphere(center, circleCast.Radius);
         }
-        else if (collision is RayCast2D rayCast)
+        else if (collision is RayCast2D)
         {
-            Gizmos.DrawRay(center, collision.Direction * rayCast.Distance);
+            Gizmos.DrawRay(center, collision.Direction);
         }
         else
         {
-            Debug.LogWarning($"Unable to draw collision of class {collision.GetType().Name}");
+            Logger.LogWarning($"Unable to draw collision of class {collision.GetType().Name}");
         }
     }
 }

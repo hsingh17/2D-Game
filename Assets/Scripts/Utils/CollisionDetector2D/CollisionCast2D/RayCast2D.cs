@@ -4,8 +4,6 @@ using UnityEngine;
 [Serializable]
 public class RayCast2D : CollisionCast2D
 {
-    public float Distance;
-
     public RayCast2D() { }
 
     public RayCast2D(
@@ -23,8 +21,11 @@ public class RayCast2D : CollisionCast2D
         Descriptor = descriptor;
     }
 
-    public override string ToString()
+    public override RaycastHit2D CheckCollision()
     {
-        return $"{base.ToString()}\nDistance: {Distance}";
+        Collider2D collider = Collider;
+        Bounds colliderBounds = collider.bounds;
+        Vector3 colliderCenter = colliderBounds.center;
+        return Physics2D.Raycast(colliderCenter, Direction, Distance, Mask);
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 public class BoxCast2D : CollisionCast2D
 {
     public float Angle;
-    public float Distance;
 
     public BoxCast2D() { }
 
@@ -26,8 +25,22 @@ public class BoxCast2D : CollisionCast2D
         Descriptor = descriptor;
     }
 
+    public override RaycastHit2D CheckCollision()
+    {
+        Collider2D collider = Collider;
+        Bounds colliderBounds = collider.bounds;
+        return Physics2D.BoxCast(
+            colliderBounds.center,
+            colliderBounds.extents,
+            Angle,
+            Direction,
+            Distance,
+            Mask
+        );
+    }
+
     public override string ToString()
     {
-        return $"{base.ToString()}\nAngle: {Angle}\nDistance: {Distance}";
+        return $"{base.ToString()}\nAngle: {Angle}";
     }
 }

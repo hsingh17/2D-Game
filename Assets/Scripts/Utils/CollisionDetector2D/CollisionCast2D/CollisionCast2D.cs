@@ -1,5 +1,4 @@
 using System;
-using NUnit.Framework.Internal;
 using UnityEngine;
 
 [Serializable]
@@ -9,6 +8,10 @@ public abstract class CollisionCast2D
     public Collider2D Collider;
     public Vector2 Direction;
     public LayerMask Mask;
+    public float Distance;
+
+    public abstract RaycastHit2D CheckCollision();
+    public abstract void DrawGizmos();
 
     public override bool Equals(object obj)
     {
@@ -29,6 +32,6 @@ public abstract class CollisionCast2D
     public override string ToString()
     {
         return $"Descriptor: {Descriptor}\nCollider: {Collider.name}\n"
-            + "Direction: {Direction}\nMask: {LayerMask.LayerToName(Mask)}\n";
+            + $"Direction: {Direction}\nDistance: {Distance}\nMask: {LayerMask.LayerToName(Mask.value)}\n";
     }
 }
