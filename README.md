@@ -1,6 +1,4 @@
 # TODO
-- Add raycast to ensure player can't phase through walls
-- Super steep slope has some issues
 - collectibles
 - enemies
 - taking damage and falling out of bounds show take dmg

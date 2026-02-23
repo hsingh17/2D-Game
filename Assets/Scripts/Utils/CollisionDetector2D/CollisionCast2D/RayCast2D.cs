@@ -34,7 +34,7 @@ public class RayCast2D : CollisionCast2D
         Vector3 center = Collider.bounds.center;
         center.z = 0;
 
-        Gizmos.color = Color.blue;
+        Gizmos.color = Hit ? Color.green : Color.red;
         Gizmos.DrawRay(center, Direction * Distance);
 
         base.DrawGizmos();

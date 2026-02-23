@@ -285,15 +285,8 @@ public class PlayerController : MonoBehaviour
 
     private float GetSnapToGroundDistance()
     {
-        CollisionDetect2D? detect = collisionDetector2D.GetCollisionResult("GroundCheck");
-        if (detect.HasValue)
-        {
-            return detect.Value.HitDistance;
-        }
-        else
-        {
-            return 0f;
-        }
+        CollisionCast2D cast = collisionDetector2D.GetCollisionResult("GroundCheck");
+        return cast.HitDistance;
     }
 
     private bool CanMoveHorizontal(Vector2 dir)

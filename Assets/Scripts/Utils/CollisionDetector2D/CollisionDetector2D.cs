@@ -5,29 +5,26 @@ using UnityEngine;
 public class CollisionDetector2D : MonoBehaviour
 {
     public bool DrawCollisions { get; set; }
-    public HashSet<CollisionCast2D> Collisions { get; set; }
-    private readonly Dictionary<string, CollisionDetect2D> collisionResults = new();
+    private readonly Dictionary<string, CollisionCast2D> collisions = new();
 
-    public void AddCollisions(List<CollisionCast2D> collisions)
+    public void AddCollisions(List<CollisionCast2D> collisionList)
     {
-        Collisions ??= new();
-
-        foreach (CollisionCast2D cast in collisions)
+        foreach (CollisionCast2D cast in collisionList)
         {
-            if (Collisions.Contains(cast))
+            if (collisions.ContainsKey(cast.Descriptor))
             {
                 throw new Exception(
                     $"Duplicate collision with descriptor {cast.Descriptor} found!"
                 );
             }
 
-            Collisions.Add(cast);
+            collisions.Add(cast.Descriptor, cast);
         }
     }
 
     public void UpdateColliderForCollisions(Collider2D newCollider)
     {
-        foreach (CollisionCast2D cast in Collisions)
+        foreach (CollisionCast2D cast in collisions.Values)
         {
             cast.Collider = newCollider;
         }
@@ -35,26 +32,18 @@ public class CollisionDetector2D : MonoBehaviour
 
     public void CheckAllCollisions()
     {
-        foreach (CollisionCast2D cast in Collisions)
+        foreach (CollisionCast2D cast in collisions.Values)
         {
             RaycastHit2D hit = cast.CheckCollision();
-            float hitDistance = CalculateHitDistance(hit, cast.Collider, cast.Direction);
-
             cast.Hit = hit;
-            cast.HitDistance = hitDistance;
-
+            cast.HitDistance = CalculateHitDistance(hit, cast.Collider, cast.Direction);
             Logger.Log($"{cast}");
         }
     }
 
-    public CollisionDetect2D? GetCollisionResult(string collisionDescriptor)
+    public CollisionCast2D GetCollisionResult(string collisionDescriptor)
     {
-        if (
-            collisionResults.TryGetValue(
-                collisionDescriptor,
-                out CollisionDetect2D collisionDetect2D
-            )
-        )
+        if (collisions.TryGetValue(collisionDescriptor, out CollisionCast2D collisionDetect2D))
         {
             return collisionDetect2D;
         }
@@ -64,8 +53,8 @@ public class CollisionDetector2D : MonoBehaviour
 
     public bool DidCollisionHit(string collisionDescriptor)
     {
-        CollisionDetect2D? collisionDetect2D = GetCollisionResult(collisionDescriptor);
-        return collisionDetect2D.HasValue && collisionDetect2D.Value.Hit;
+        CollisionCast2D collisionCast = GetCollisionResult(collisionDescriptor);
+        return collisionCast.Hit;
     }
 
     private float CalculateHitDistance(RaycastHit2D hit, Collider2D collider, Vector2 direction)
@@ -91,7 +80,7 @@ public class CollisionDetector2D : MonoBehaviour
             return;
         }
 
-        foreach (CollisionCast2D collision in Collisions)
+        foreach (CollisionCast2D collision in collisions.Values)
         {
             collision.DrawGizmos();
         }

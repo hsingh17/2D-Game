@@ -48,6 +48,7 @@ public class BoxCast2D : CollisionCast2D
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(center, size);
+        Gizmos.color = Hit ? Color.green : Color.red;
         center += new Vector3(Direction.x, Direction.y) * Distance;
         Gizmos.DrawWireCube(center, size);
 

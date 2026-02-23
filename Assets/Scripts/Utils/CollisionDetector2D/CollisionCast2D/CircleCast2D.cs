@@ -40,6 +40,7 @@ public class CircleCast2D : CollisionCast2D
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(center, Radius);
+        Gizmos.color = Hit ? Color.green : Color.red;
         center += new Vector3(Direction.x, Direction.y) * Distance;
         Gizmos.DrawWireSphere(center, Radius);
 
