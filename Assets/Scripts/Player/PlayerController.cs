@@ -58,6 +58,7 @@ public class PlayerController : MonoBehaviour
         playerAnimationStateManager = gameObject.GetComponent<PlayerAnimationStateManager>();
 
         currentCollider = standingCollider;
+        crouchedCollider.enabled = false;
         collisionDetector2D = gameObject.AddComponent<CollisionDetector2D>();
         collisionDetector2D.DrawCollisions = drawCollisions;
         collisionDetector2D.AddCollisions(collisions);
@@ -144,8 +145,6 @@ public class PlayerController : MonoBehaviour
         Vector2 curPosition = rb.position;
         Vector2 change = new(entityScriptableObject.speed * Time.fixedDeltaTime, GetYMovement());
         Vector2 nextPosition = curPosition + (change * movement);
-
-        Logger.Log($"Current Pos: {curPosition}. Final Pos: {nextPosition}");
 
         rb.MovePosition(nextPosition);
 

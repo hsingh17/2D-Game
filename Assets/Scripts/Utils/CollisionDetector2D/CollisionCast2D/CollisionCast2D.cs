@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEngine;
 
 [Serializable]
@@ -44,7 +45,10 @@ public abstract class CollisionCast2D
 
     public override string ToString()
     {
+        int layerIndex = (int)Mathf.Log(Mask.value, 2);
+        string maskName = LayerMask.LayerToName(layerIndex);
+
         return $"Descriptor: {Descriptor}\nCollider: {Collider.name}\n"
-            + $"Direction: {Direction}\nDistance: {Distance}\nMask: {LayerMask.LayerToName(Mask.value)}\n";
+            + $"Direction: {Direction}\nDistance: {Distance}\nMask: {maskName}\n";
     }
 }
