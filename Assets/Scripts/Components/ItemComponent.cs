@@ -1,14 +1,32 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Pool;
 
 public class ItemComponent : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject onCollectEffect;
+
+    private CustomObjectPool objectPool;
+
+    private void Awake()
+    {
+        objectPool = new(onCollectEffect);
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Logger.Log($"{other.tag}");
-        Destroy(gameObject);
-        // Item component needs some kind of associated "Fx" variable for knowing what to play when collected
-        // https://www.youtube.com/watch?v=U08ScgT3RVM
-        // pool.Get();
+        // TODO:  Need to make item invisible since destroying means obj never released
+        // also pool should be shared rn tied to one item
+        GameObject effect = objectPool.GetGameObject();
+        effect.transform.position = transform.position;
+        StartCoroutine(ReturnAfter(gameObject, 1f));
+    }
+
+    private IEnumerator ReturnAfter(GameObject gameObject, float seconds)
+    {
+        Logger.Log("courutine");
+        yield return new WaitForSeconds(seconds);
+        Logger.Log("releasing");
+        objectPool.ReleaseGameObject(gameObject);
     }
 }
