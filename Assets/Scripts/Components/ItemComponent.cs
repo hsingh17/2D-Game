@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class ItemComponent : MonoBehaviour
 {
@@ -8,5 +9,6 @@ public class ItemComponent : MonoBehaviour
         Destroy(gameObject);
         // Item component needs some kind of associated "Fx" variable for knowing what to play when collected
         // https://www.youtube.com/watch?v=U08ScgT3RVM
+        // pool.Get();
     }
 }
