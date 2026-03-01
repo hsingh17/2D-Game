@@ -1,14 +1,21 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class CustomObjectPool
+public class GameObjectPool : MonoBehaviour
 {
-    private readonly GameObject objectPrefab;
-    private readonly ObjectPool<GameObject> pool;
+    [SerializeField]
+    private GameObject objectPrefab;
 
-    public CustomObjectPool(GameObject objectPrefab, int defaultCapacity = 10, int maxSize = 25)
+    [SerializeField]
+    private int defaultCapacity = 10;
+
+    [SerializeField]
+    private int maxSize = 25;
+
+    private ObjectPool<GameObject> pool;
+
+    void Awake()
     {
-        this.objectPrefab = objectPrefab;
         pool = new(
             createFunc: CreateGameObject,
             actionOnGet: OnGetGameObject,
@@ -32,7 +39,7 @@ public class CustomObjectPool
 
     private GameObject CreateGameObject()
     {
-        GameObject gameObject = Object.Instantiate(objectPrefab);
+        GameObject gameObject = Instantiate(objectPrefab);
         gameObject.SetActive(false);
         return gameObject;
     }
@@ -49,6 +56,6 @@ public class CustomObjectPool
 
     private void OnDestroyGameObject(GameObject gameObject)
     {
-        Object.Destroy(gameObject);
+        Destroy(gameObject);
     }
 }
