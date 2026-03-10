@@ -1,13 +1,11 @@
 using System;
-using UnityEngine;
 
-public abstract class StateManager<T> : MonoBehaviour
+public class StateManager<T>
     where T : Enum
 {
     public delegate void OnStateUpdate(T newState);
     public static event OnStateUpdate onStateUpdate;
 
-    [SerializeField]
     private T currentState;
 
     public T CurrentState

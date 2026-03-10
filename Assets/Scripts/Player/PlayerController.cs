@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     #region Private Variables
 
     private Collider2D currentCollider;
-    private PlayerAnimationStateManager playerAnimationStateManager;
+    private StateManager<PlayerAnimationState> playerAnimationStateManager;
     private Vector2 movement;
     private float startJumpY;
     private CollisionDetector2D collisionDetector2D;
@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
-        playerAnimationStateManager = gameObject.GetComponent<PlayerAnimationStateManager>();
+        playerAnimationStateManager = new StateManager<PlayerAnimationState>();
 
         currentCollider = standingCollider;
         crouchedCollider.enabled = false;
