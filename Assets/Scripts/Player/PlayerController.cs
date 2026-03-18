@@ -19,9 +19,6 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
 
     [SerializeField]
-    private LayerMask groundMask;
-
-    [SerializeField]
     private Collider2D standingCollider;
 
     [SerializeField]
