@@ -5,10 +5,10 @@ public abstract class Enemy<T> : Entity<T>
     where T : Enum
 {
     [SerializeField]
-    protected GameObject patrolPointA;
+    protected CircleCollider2D leftPatrolPoint;
 
     [SerializeField]
-    protected GameObject patrolPointB;
+    protected CircleCollider2D rightPatrolPoint;
 
     [SerializeField]
     protected float restTime;
