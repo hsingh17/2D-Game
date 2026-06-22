@@ -1,11 +1,12 @@
 using System;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public enum AlwaysPatrollingEnemyState
 {
-    MOVE_LEFT = -1,
-    INITIAL_STATE = 0,
-    MOVE_RIGHT = 1,
+    MoveLeft = -1,
+    Default = 0,
+    MoveRight = 1,
 };
 
 public class AlwaysPatrollingEnemy : Enemy<AlwaysPatrollingEnemyState>
@@ -16,51 +17,44 @@ public class AlwaysPatrollingEnemy : Enemy<AlwaysPatrollingEnemyState>
     protected override void DoAction()
     {
         Move();
+        UpdatePatrolPoint();
     }
 
     protected override void UpdateState()
     {
-        Vector2 left = (Vector2)leftPatrolPoint.transform.position;
-        Vector2 right = (Vector2)rightPatrolPoint.transform.position;
-        float distLeft = Vector2.Distance(left, rb.position);
-        float distRight = Vector2.Distance(right, rb.position);
+        if (patrolPoints.Length == 0)
+        {
+            return;
+        }
 
-        if (StateManager.CurrentState == AlwaysPatrollingEnemyState.INITIAL_STATE)
-        {
-            if (distLeft < distRight)
-            {
-                StateManager.CurrentState = AlwaysPatrollingEnemyState.MOVE_LEFT;
-            }
-            else
-            {
-                StateManager.CurrentState = AlwaysPatrollingEnemyState.MOVE_RIGHT;
-            }
-        }
-        else if (
-            StateManager.CurrentState == AlwaysPatrollingEnemyState.MOVE_LEFT
-            && distLeft < leftPatrolPoint.radius
-        )
-        {
-            StateManager.CurrentState = AlwaysPatrollingEnemyState.MOVE_RIGHT;
-        }
-        else if (
-            StateManager.CurrentState == AlwaysPatrollingEnemyState.MOVE_RIGHT
-            && distRight < rightPatrolPoint.radius
-        )
-        {
-            StateManager.CurrentState = AlwaysPatrollingEnemyState.MOVE_LEFT;
-        }
+        CircleCollider2D currentPatrolPoint = patrolPoints[currentPatrolPointIdx];
+        Vector2 patrolPointPos = currentPatrolPoint.transform.position;
+        Vector2 curPosition = rb.position;
+        float dirX = patrolPointPos.x - curPosition.x;
+
+        stateManager.CurrentState =
+            dirX < 0 ? AlwaysPatrollingEnemyState.MoveLeft : AlwaysPatrollingEnemyState.MoveRight;
     }
 
     protected void Move()
     {
+        float ySpeed = IsGrounded() ? GetSnapToGroundDistance() : GetGravityMovement();
+        Debug.Log(IsGrounded());
         Vector2 change = new(
             scriptableObject.speed * Time.fixedDeltaTime * (int)StateManager.CurrentState,
-            GetSnapToGroundDistance()
+            ySpeed
         );
-        // TODO: Think of a way for all entities to be subjected to gravity or snap to ground
-
         Vector2 nextPosition = rb.position + change;
         rb.MovePosition(nextPosition);
+    }
+
+    protected void UpdatePatrolPoint()
+    {
+        CircleCollider2D currentPatrolPoint = patrolPoints[currentPatrolPointIdx];
+        float dist = Vector2.Distance(currentPatrolPoint.transform.position, rb.position);
+        if (dist <= currentPatrolPoint.radius)
+        {
+            currentPatrolPointIdx = (currentPatrolPointIdx + 1) % patrolPoints.Length;
+        }
     }
 }

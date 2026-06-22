@@ -53710,6 +53710,74 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &217382537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 217382538}
+  - component: {fileID: 217382539}
+  m_Layer: 6
+  m_Name: C
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &217382538
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 217382537}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.71, y: -2.97, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 546163137}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &217382539
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 217382537}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
 --- !u!4 &279642442 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3076625234489142541, guid: 0e79dbf044694dd48b56e1ca42e712cf, type: 3}
@@ -54293,7 +54361,7 @@ GameObject:
   m_Component:
   - component: {fileID: 546163137}
   m_Layer: 6
-  m_Name: Patrol Points
+  m_Name: Bear Patrol Points
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54314,6 +54382,7 @@ Transform:
   m_Children:
   - {fileID: 903074215}
   - {fileID: 863253924}
+  - {fileID: 217382538}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &565818803
@@ -54770,7 +54839,7 @@ GameObject:
   - component: {fileID: 863253924}
   - component: {fileID: 863253925}
   m_Layer: 6
-  m_Name: Right
+  m_Name: B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54785,7 +54854,7 @@ Transform:
   m_GameObject: {fileID: 863253923}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.66, y: -0.61, z: 0}
+  m_LocalPosition: {x: 6.91, y: -0.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -54848,7 +54917,7 @@ GameObject:
   - component: {fileID: 903074215}
   - component: {fileID: 903074216}
   m_Layer: 6
-  m_Name: Left
+  m_Name: A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60393,10 +60462,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6f13f78ad108f74596ba1d5664d9c66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemCollectFeedbackDuration: 0.3
+  itemCollectFeedbackDuration: 0.5
   itemCollectFeedbackPoolDefaultCapacity: 10
   itemCollectFeedbackPoolMaxSize: 25
-  itemCollectFeedbackPrefab: {fileID: 1420503234785191454, guid: 338851f1341f70040ab8bc3a2b1def4c, type: 3}
+  itemCollectFeedbackPrefab: {fileID: 0}
 --- !u!1001 &1217558317
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60569,7 +60638,7 @@ Transform:
   m_GameObject: {fileID: 1344260566}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.62, y: 2.65, z: -0.0029260854}
+  m_LocalPosition: {x: -2.48, y: 5.65, z: -0.0029260854}
   m_LocalScale: {x: 0.65225434, y: 0.65225434, z: 0.65225434}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -60592,11 +60661,13 @@ MonoBehaviour:
   rb: {fileID: 1344260571}
   spriteCollider: {fileID: 2046255755}
   scriptableObject: {fileID: 11400000, guid: b8504c4d10ba27541931d970c10adf42, type: 2}
-  drawCollisions: 1
+  drawCollisions: 0
   collisions:
   - rid: 5651515467424333895
-  leftPatrolPoint: {fileID: 903074216}
-  rightPatrolPoint: {fileID: 863253925}
+  patrolPoints:
+  - {fileID: 903074216}
+  - {fileID: 863253925}
+  - {fileID: 217382539}
   restTime: 0
   references:
     version: 2

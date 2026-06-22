@@ -18,4 +18,4 @@ MonoBehaviour:
   jumpHeight: 1
   attackDamage: 1
   gravityForce: -9.81
-  gravityScale: 1
+  gravityScale: 100

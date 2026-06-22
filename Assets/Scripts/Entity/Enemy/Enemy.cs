@@ -5,11 +5,10 @@ public abstract class Enemy<T> : Entity<T>
     where T : Enum
 {
     [SerializeField]
-    protected CircleCollider2D leftPatrolPoint;
-
-    [SerializeField]
-    protected CircleCollider2D rightPatrolPoint;
+    protected CircleCollider2D[] patrolPoints;
 
     [SerializeField]
     protected float restTime;
+
+    protected int currentPatrolPointIdx = 0;
 }
