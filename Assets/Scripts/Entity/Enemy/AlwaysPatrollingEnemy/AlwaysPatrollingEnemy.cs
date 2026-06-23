@@ -18,6 +18,7 @@ public class AlwaysPatrollingEnemy : Enemy<AlwaysPatrollingEnemyState>
     {
         Move();
         UpdatePatrolPoint();
+        FlipSprite();
     }
 
     protected override void UpdateState()
@@ -39,7 +40,6 @@ public class AlwaysPatrollingEnemy : Enemy<AlwaysPatrollingEnemyState>
     protected void Move()
     {
         float ySpeed = IsGrounded() ? GetSnapToGroundDistance() : GetGravityMovement();
-        Debug.Log(IsGrounded());
         Vector2 change = new(
             scriptableObject.speed * Time.fixedDeltaTime * (int)StateManager.CurrentState,
             ySpeed
@@ -56,5 +56,10 @@ public class AlwaysPatrollingEnemy : Enemy<AlwaysPatrollingEnemyState>
         {
             currentPatrolPointIdx = (currentPatrolPointIdx + 1) % patrolPoints.Length;
         }
+    }
+
+    protected void FlipSprite()
+    {
+        spriteRenderer.flipX = stateManager.CurrentState == AlwaysPatrollingEnemyState.MoveLeft;
     }
 }

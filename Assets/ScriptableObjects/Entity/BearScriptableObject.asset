@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: BearScriptableObject
   m_EditorClassIdentifier: 
   health: 1
-  speed: 3
-  jumpSpeed: 10
-  jumpHeight: 1
+  speed: 2.5
+  jumpSpeed: 0
+  jumpHeight: 0
   attackDamage: 1
   gravityForce: -9.81
   gravityScale: 100

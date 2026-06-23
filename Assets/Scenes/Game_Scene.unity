@@ -53996,6 +53996,39 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!1 &494452904
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 494452905}
+  m_Layer: 0
+  m_Name: Bear
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &494452905
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 494452904}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.5728467, y: 3.6486852, z: -0.027640238}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1344260569}
+  - {fileID: 546163137}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -54361,7 +54394,7 @@ GameObject:
   m_Component:
   - component: {fileID: 546163137}
   m_Layer: 6
-  m_Name: Bear Patrol Points
+  m_Name: Patrol Points
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54376,14 +54409,14 @@ Transform:
   m_GameObject: {fileID: 546163136}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.62, y: 2.65, z: -0.0029260854}
+  m_LocalPosition: {x: -0.047153234, y: -0.9986851, z: 0.024714153}
   m_LocalScale: {x: 0.65225434, y: 0.65225434, z: 0.65225434}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 903074215}
   - {fileID: 863253924}
   - {fileID: 217382538}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 494452905}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &565818803
 PrefabInstance:
@@ -60465,7 +60498,7 @@ MonoBehaviour:
   itemCollectFeedbackDuration: 0.5
   itemCollectFeedbackPoolDefaultCapacity: 10
   itemCollectFeedbackPoolMaxSize: 25
-  itemCollectFeedbackPrefab: {fileID: 0}
+  itemCollectFeedbackPrefab: {fileID: 1420503234785191454, guid: 338851f1341f70040ab8bc3a2b1def4c, type: 3}
 --- !u!1001 &1217558317
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -60623,7 +60656,7 @@ GameObject:
   - component: {fileID: 1344260571}
   - component: {fileID: 1344260570}
   m_Layer: 6
-  m_Name: Bear
+  m_Name: Model
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60637,14 +60670,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344260566}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.48, y: 5.65, z: -0.0029260854}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.09284663, y: 2.0013149, z: 0.024714153}
   m_LocalScale: {x: 0.65225434, y: 0.65225434, z: 0.65225434}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 742024753}
   - {fileID: 2046255754}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 494452905}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1344260570
 MonoBehaviour:
@@ -60662,6 +60695,7 @@ MonoBehaviour:
   spriteCollider: {fileID: 2046255755}
   scriptableObject: {fileID: 11400000, guid: b8504c4d10ba27541931d970c10adf42, type: 2}
   drawCollisions: 0
+  spriteRenderer: {fileID: 742024755}
   collisions:
   - rid: 5651515467424333895
   patrolPoints:
@@ -60681,7 +60715,7 @@ MonoBehaviour:
         Mask:
           serializedVersion: 2
           m_Bits: 128
-        Distance: 0.58
+        Distance: 1
         Hit: 0
         HitDistance: 0
         Radius: 0.1
@@ -63462,5 +63496,4 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 337472373}
   - {fileID: 1804276098}
-  - {fileID: 1344260569}
-  - {fileID: 546163137}
+  - {fileID: 494452905}

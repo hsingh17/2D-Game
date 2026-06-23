@@ -11,4 +11,10 @@ public abstract class Enemy<T> : Entity<T>
     protected float restTime;
 
     protected int currentPatrolPointIdx = 0;
+
+    /*
+       Next:
+           - Enemy collision with player -> dmg player and make player lose hp
+           - Player jump on enemy -> enemy die if lose all hp
+       */
 }

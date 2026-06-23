@@ -17,6 +17,9 @@ public abstract class Entity<T> : MonoBehaviour
     [SerializeField]
     protected bool drawCollisions;
 
+    [SerializeField]
+    protected SpriteRenderer spriteRenderer;
+
     [SerializeReference, SubclassSelector]
     protected List<CollisionCast2D> collisions;
 
